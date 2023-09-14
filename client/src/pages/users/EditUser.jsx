@@ -23,16 +23,16 @@ const EditUser = () => {
         isLoading: profileIsLoading,
     } = useQuery({
         queryFn: () => {
-            return getUserProfile({token: userState?.userInfo?.token})
+            return getUserProfile({ token: userState?.userInfo?.token })
         },
         queryKey: ["profile"]
     })
 
     const { mutate, isLoading: updateIsLoading } = useMutation({
-        mutationFn: ({firstName, lastName, email, password}) => {
+        mutationFn: ({ firstName, lastName, email, password }) => {
             return updateProfile({
                 token: userState.userInfo.token,
-                userData: {firstName, lastName, email, password}
+                userData: { firstName, lastName, email, password }
             })
         },
         onSuccess: (data) => {
@@ -40,6 +40,7 @@ const EditUser = () => {
             localStorage.setItem("account", JSON.stringify(data))
             queryClient.invalidateQueries(["profile"])
             toast.success("Profile has been updated")
+            navigate('/user/profile')
         },
         onError: (error) => {
             toast.error(error.message)
@@ -66,17 +67,17 @@ const EditUser = () => {
         },
         values: useMemo(() => {
             return {
-                firstName: profileIsLoading ? "" : profileData?.firstName,
-                lastName: profileIsLoading ? "" : profileData?.lastName,
-                email: profileIsLoading ? "" : profileData?.email
+                firstName: profileIsLoading ? "" : profileData.firstName,
+                lastName: profileIsLoading ? "" : profileData.lastName,
+                email: profileIsLoading ? "" : profileData.email
             }
         }, [profileData?.firstName, profileData?.lastName, profileData?.email, profileIsLoading]),
         mode: "onChange"
     })
 
     const submitHandler = (data) => {
-        const {firstName, lastName, email, password} = data
-        mutate({firstName, lastName, email, password})
+        const { firstName, lastName, email, password } = data
+        mutate({ firstName, lastName, email, password })
     }
 
     return (
@@ -122,7 +123,7 @@ const EditUser = () => {
                         <div>
                             <label htmlFor="email">Email</label>
                             <input
-                                type='text'
+                                type='email'
                                 id='email'
                                 {...register("email", {
                                     required: {

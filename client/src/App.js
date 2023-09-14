@@ -1,7 +1,6 @@
-import logo from './logo.svg';
 import './App.css';
-import {Routes, Route} from 'react-router-dom'
-import {Toaster} from 'react-hot-toast'
+import { Routes, Route } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 
 import HomePage from './pages/Home/HomePage'
 import Register from './pages/auth/Register';

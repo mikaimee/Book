@@ -17,9 +17,9 @@ const Register = () => {
     const dispatch = useDispatch()
     const userState = useSelector(state => state.user)
 
-    const {mutate, isLoading} = useMutation({
-        mutationFn: ({firstName, lastName, email, password}) => {
-            return signup({firstName, lastName, email, password})
+    const { mutate, isLoading } = useMutation({
+        mutationFn: ({ firstName, lastName, email, password }) => {
+            return signup({ firstName, lastName, email, password })
         },
         onSuccess: (data) => {
             console.log(data)
@@ -34,14 +34,15 @@ const Register = () => {
 
     useEffect(() => {
         if(userState.userInfo) {
-            navigate("/")
+            navigate('/')
         }
     }, [navigate, userState.userInfo])
 
-    const {register, handleSubmit, formState: {errors, isValid}, watch} = useForm({
+    const { register, handleSubmit, formState: {errors, isValid}, watch } = useForm({
         defaultValues: {
             firstName: "",
             lastName: "",
+            email: "",
             password: "",
             confirmPassword: ""
         },
@@ -49,8 +50,8 @@ const Register = () => {
     })
 
     const submitHandler = (data) => {
-        const {firstName, lastName, email, password} = data
-        mutate({firstName, lastName, email, password})
+        const { firstName, lastName, email, password } = data
+        mutate({ firstName, lastName, email, password })
     }
 
     const password = watch('password')
@@ -98,7 +99,7 @@ const Register = () => {
                         <div>
                             <label htmlFor="email">Email</label>
                             <input
-                                type='text'
+                                type='email'
                                 id='email'
                                 {...register("email", {
                                     required: {
@@ -140,7 +141,7 @@ const Register = () => {
                         <div>
                             <label htmlFor="confirmPassword">Confirm Password</label>
                             <input
-                                type='confirmPassword'
+                                type='password'
                                 id='confirmPassword'
                                 {...register("confirmPassword", {
                                     required: {

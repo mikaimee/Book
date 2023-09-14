@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react'
 import Layout from '../../components/Layout'
 import { Link, useNavigate } from 'react-router-dom'
-import {useMutation} from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { signin } from '../../services/auth'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { userActions} from '../../store/userReducer'
+
+const EMAIL_VALID = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+const PASSWORD_VALID = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
 
 const Login = () => {
 
@@ -14,9 +17,9 @@ const Login = () => {
     const dispatch = useDispatch()
     const userState = useSelector(state => state.user)
 
-    const {mutate, isLoading} = useMutation({
-        mutationFn: ({email, password}) => {
-            return signin({email, password})
+    const { mutate, isLoading } = useMutation({
+        mutationFn: ({ email, password }) => {
+            return signin({ email, password })
         },
         onSuccess: (data) => {
             console.log(data)
@@ -44,62 +47,67 @@ const Login = () => {
     })
 
     const submitHandler = (data) => {
-        const {email, password} = data
-        mutate({email, password})
+        const { email, password } = data
+        mutate({ email, password })
     }
 
     return (
-        <section>
-            <div>
-                <form onSubmit={handleSubmit(submitHandler)}>
-                    <h2>Login</h2>
-                    <div>
-                        <label htmlFor='email'>Email</label>
-                        <input 
-                            type='text'
-                            id='email'
-                            {...register("email", {
-                                required: {
-                                    value: true,
-                                    message: "Email is required"
-                                }
-                            })}
-                            placeholder='Enter email'
-                        />
-                        {errors.email?.message && (
-                            <p>{errors.email?.message}</p>
-                        )}
-                    </div>
-                    <div>
-                        <label htmlFor='password'>Password</label>
-                        <input 
-                            type='password'
-                            required
-                            id='password'
-                            {...register("password", {
-                                required: {
-                                    value: true,
-                                    message: "Password is required"
-                                }
-                            })}
-                            placeholder='Enter password'
-                        />
-                        {errors.password?.message && (
-                            <p>{errors.password?.message}</p>
-                        )}
-                    </div>
-                    <Link to="/register">
-                        <p>Need an account?</p>
-                    </Link>
-                    <button 
-                        type='submit'
-                        disabled={!isValid || isLoading}
-                    >
-                        Login
-                    </button> 
-                </form>
-            </div>
-        </section>
+        <Layout>
+            <section>
+                <div>
+                    <form onSubmit={handleSubmit(submitHandler)}>
+                        <h2>Login</h2>
+                        <div>
+                            <label htmlFor='email'>Email</label>
+                            <input 
+                                type='email'
+                                id='email'
+                                {...register("email", {
+                                    required: {
+                                        value: true,
+                                        message: "Email is required"
+                                    },
+                                    pattern: {
+                                        vallue: EMAIL_VALID,
+                                        message: "Your email must be in the correct format"
+                                    }
+                                })}
+                                placeholder='Enter email'
+                            />
+                            {errors.email?.message && (
+                                <p>{errors.email?.message}</p>
+                            )}
+                        </div>
+                        <div>
+                            <label htmlFor='password'>Password</label>
+                            <input 
+                                type='password'
+                                id='password'
+                                {...register("password", {
+                                    required: {
+                                        value: true,
+                                        message: "Password is required"
+                                    }
+                                })}
+                                placeholder='Enter password'
+                            />
+                            {errors.password?.message && (
+                                <p>{errors.password?.message}</p>
+                            )}
+                        </div>
+                        <Link to="/register">
+                            <p>Need an account?</p>
+                        </Link>
+                        <button 
+                            type='submit'
+                            disabled={!isValid || isLoading}
+                        >
+                            Login
+                        </button> 
+                    </form>
+                </div>
+            </section>
+        </Layout>
     )
 }
 

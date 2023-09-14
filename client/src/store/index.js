@@ -1,13 +1,12 @@
-import {configureStore} from '@reduxjs/toolkit'
-
-import {userReducer} from './userReducer'
+import { configureStore } from '@reduxjs/toolkit'
+import { userReducer } from './userReducer'
 
 const userInfoFromStorage = localStorage.getItem('account') 
     ? JSON.parse(localStorage.getItem('account')) 
     : null
 
 const initialState = {
-    user: {userInfo: userInfoFromStorage}
+    user: { userInfo: userInfoFromStorage }
 }
 
 const store = configureStore({

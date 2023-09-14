@@ -37,7 +37,12 @@ const updateUser = async(req, res) => {
         user.firstName = req.body.firstName || user.firstName
         user.lastName = req.body.lastName || user.lastName
         user.email = req.body.email || user.email
-        user.password = req.body.password
+        if (req.body.password && req.body.password.length < 8) {
+            return res.json({message: "Password must be at least 8 characters long"})
+        }
+        else if (req.body.password) {
+            user.password = req.body.password
+        }
 
         const updatedUser = await user.save()
         res.json({
@@ -45,7 +50,6 @@ const updateUser = async(req, res) => {
             firstName: updatedUser.firstName,
             lastName: updatedUser.lastName,
             email: updatedUser.email,
-            password: updatedUser.password,
             token: await updatedUser.getSigninToken(),
             message: `${updatedUser.firstName} updated`
         })

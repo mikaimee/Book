@@ -1,10 +1,10 @@
 import axios from "axios";
 
-export const getUserProfile = async ({token}) => {
+export const getUserProfile = async ({ token }) => {
     try {
         const config = {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${ token }`,
             },
         };
         const { data } = await axios.get("http://localhost:8000/users/profile", config);
@@ -17,14 +17,14 @@ export const getUserProfile = async ({token}) => {
     }
 }
 
-export const updateProfile = async ({token, userData}) => {
+export const updateProfile = async ({ token, userData }) => {
     try {
         const config = {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${ token }`,
             },
         };
-        const { data } = await axios.patch("http://localhost:8000/users/", config, userData);
+        const { data } = await axios.patch("http://localhost:8000/users/", userData, config);
         return data;
     } 
     catch (error) {
