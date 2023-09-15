@@ -4,7 +4,7 @@ const app = express()
 const cors = require('cors')
 const corsOptions = require('./config/corsOptions')
 const path = require('path')
-const {logger} = require('./middleware/logger')
+const { logger } = require('./middleware/logger')
 const errorLogger = require('./middleware/errLogger')
 const cookieParser = require('cookie-parser')
 const credentials = require('./middleware/credentials')
@@ -24,7 +24,7 @@ app.use(credentials)
 app.use(cors(corsOptions))
 
 // Handle urlencoded form data
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
 
 // middleware for json
 app.use(express.json())
@@ -39,8 +39,11 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 app.use('/', require('./routes/root'))
 app.use('/auth', require('./routes/authRoutes'))
 app.use('/users', require('./routes/userRoutes'))
+app.use('/books', require('./routes/bookRoutes'))
+app.use('/genres', require('./routes/genreRoutes'))
+app.use('/bookGenres', require('./routes/bookGenreRoutes'))
 
-// Custom 404 Error Page
+// Custom 404 Error Page 
 app.all('*', (req, res) => {
     res.status(404)
     if (req.accepts('html')) {

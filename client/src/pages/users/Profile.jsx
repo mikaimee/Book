@@ -4,8 +4,6 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
 import { getUserProfile } from '../../services/user'
-import { userActions } from '../../store/userReducer'
-
 
 const Profile = () => {
 
