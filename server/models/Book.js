@@ -57,13 +57,14 @@ const BookSchema = new Schema({
     readerFinished: {
         type: Date,
         default: null
-    },
-    reviews: [
-        {
-            type:Schema.Types.ObjectId,
-            ref: 'Review'
-        }
-    ]
-}, {timestamps: true})
+    }
+}, {timestamps: true, toJSON: { virtuals: true }})
+
+// defines a virtual field named "reviews" on 'BookSchema'
+BookSchema.virtual("reviews", {
+    ref: "Review",  // specifies that virtual field 'reviews' is related to "Review" model
+    localField: "_id", // '_id' field of the 'Book' model is used as the local field to establish relationship
+    foreignField: "book"  // 'Book' model's '_id' will be compared with 'book' field in 'Review' model to retrieve related reviews
+})
 
 module.exports = mongoose.model('Book', BookSchema)

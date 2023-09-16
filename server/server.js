@@ -42,6 +42,7 @@ app.use('/users', require('./routes/userRoutes'))
 app.use('/books', require('./routes/bookRoutes'))
 app.use('/genres', require('./routes/genreRoutes'))
 app.use('/bookGenres', require('./routes/bookGenreRoutes'))
+app.use('/reviews', require('./routes/reviewRoutes'))
 
 // Custom 404 Error Page 
 app.all('*', (req, res) => {
