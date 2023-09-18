@@ -15,7 +15,10 @@ const oneUser = async(req, res) => {
                 _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                email: user.email
+                email: user.email,
+                profilePicture: user.profilePicture,
+                isAdmin: user.isAdmin,
+                library: user.library,
             })
         }
         else {
@@ -50,6 +53,9 @@ const updateUser = async(req, res) => {
             firstName: updatedUser.firstName,
             lastName: updatedUser.lastName,
             email: updatedUser.email,
+            profilePicture: updatedUser.profilePicture,
+            isAdmin: updatedUser.isAdmin,
+            library: updatedUser.library,
             token: await updatedUser.getSigninToken(),
             message: `${updatedUser.firstName} updated`
         })

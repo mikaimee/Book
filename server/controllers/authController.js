@@ -31,6 +31,9 @@ const registration = async (req, res) => {
                 lastName: newUser.lastName,
                 password: newUser.password,
                 email: newUser.email,
+                profilePicture: newUser.profilePicture,
+                isAdmin: newUser.isAdmin,
+                library: newUser.library,
                 token: await newUser.getSigninToken(),
                 message: `New user ${firstName} created` 
             })
@@ -64,6 +67,9 @@ const login = async (req, res) => {
             lastName: user.lastName,
             email: user.email,
             password: user.password,
+            profilePicture: user.profilePicture,
+            isAdmin: user.isAdmin,
+            library: user.library,
             token: await user.getSigninToken(),
             message: `${user.firstName} is logged in!` 
         })

@@ -20,7 +20,20 @@ const UserSchema = new Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    profilePicture: {
+        type: String
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
+    library: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'UserBook'
+        }
+    ]
 }, {timestamps: true})
 
 UserSchema.pre("save", async function (next) {
