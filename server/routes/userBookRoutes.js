@@ -8,5 +8,11 @@ router.route('/')
 router.route('/:associationId')
     .delete(userBookController.removeAssociation)
     .patch(userBookController.updateAssociation)
+    .get(userBookController.getBookAssociationDetails)
 
+router.route('/history/:userId')  // Working on it
+    .get(userBookController.getUserHistory)
+
+router.route('/start/:associationId')
+    .patch(userBookController.startReadingBook)
 module.exports = router

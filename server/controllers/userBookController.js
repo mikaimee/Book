@@ -1,5 +1,6 @@
 const UserBook = require('../models/UserBook')
 const User = require('../models/User')
+const Book = require('../models/Book')
 
 const createUserBookAssociation = async (req, res) => {
     try {
@@ -72,9 +73,83 @@ const updateAssociation = async (req, res) => {
     }
 }
 
+// Retrieve details of specific association like data added to library
+const getBookAssociationDetails = async (req, res) => {
+    try {
+        const { associationId } = req.params
+
+        const association = await UserBook.findById(associationId).populate('book')
+        if (!association) {
+            return res.status(404).json({ error: "Book Association does not exist" })
+        }
+        res.status(200).json({ association })
+    }
+    catch (error) {
+        console.error(error)
+        res.status(500).json({ error: "An error occurred while retrieving book association details" })
+    }
+}
+
+// WORK IN PROGRESS //
+
+// User History
+const getUserHistory = async (req, res) => {
+    try {
+        const userId = req.params.userId
+        const history = await UserBook.find({ userId }).populate('book')
+        if(history.length === 0) {
+            return res.status(404).json({ error: "user has no history" })
+        }
+        res.status(200).json({ history })
+    }
+    catch (error) {
+        console.error(error)
+        res.status(500).json({ error: "An error occurred while retrieving user history" })
+    }
+}
+
+// Start reading a book
+const startReadingBook = async (req, res) => {
+    try{
+        const associationId = req.params.associationId;
+        const { readerStatus, readerStarted } = req.body;
+
+        // Update the UserBook association with the new values
+        const updatedAssociation = await UserBook.findByIdAndUpdate(
+            associationId,
+            { readerStatus, readerStarted },
+            { new: true } // To get the updated association after the update
+        );
+        if (!updatedAssociation) {
+            return res.status(404).json({ error: "Association not found" });
+        }
+
+        // Update the book in the user's library here as well
+        const user = await User.findById(updatedAssociation.user);
+        const bookId = updatedAssociation.book;
+
+        // Find the book in the user's library and update its fields
+        const userLibraryBook = user.library.find((libraryBook) => libraryBook.book.equals(bookId));
+        if (userLibraryBook) {
+            userLibraryBook.readerStatus = readerStatus;
+            userLibraryBook.readerStarted = readerStarted;
+        }
+        await user.save();
+
+        res.status(200).json({ message: "Reader status and started date updated successfully", userLibraryBook })
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occurred while marking the book as complete" })
+    }
+}
+
 
 module.exports = {
     createUserBookAssociation,
     removeAssociation,
-    updateAssociation
+    updateAssociation,
+    getBookAssociationDetails,
+    getUserHistory,
+    startReadingBook
 }
