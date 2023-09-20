@@ -1,26 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Layout from '../../components/Layout'
 import { createBook } from '../../services/book'
+import { allGenres } from '../../services/genre'
+import { createBookGenreAssociation } from '../../services/bookgenres'
+import  { createGenre } from '../../services/genre'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const CreateBook = () => {
 
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
+    const [selectedGenres, setSelectedGenres] = useState([])
+    const [isAddingGenre, setIsAddingGenre] = useState(false)
+    const [newGenreName, setNewGenreName] = useState('')
+
+    const {
+        data: genresData,
+        isLoading: isLoadingGenres,
+    } = useQuery(['allGenres'], allGenres);
 
     const {
         mutate,
-        isLoading
+        isLoading: isLoadingCreatingBook
     } = useMutation({
         mutationFn: ({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished }) => {
             return createBook({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished })
         },
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             toast.success("Successfylly created book")
             console.log(data)
             const bookId = data.book._id
+
+            // Create association between book and selected genres
+            await Promise.all(
+                selectedGenres.map(async (genre) => {
+                    await createBookGenreAssociation(bookId, genre._id)
+                })
+            )
             navigate(`/book/${bookId}`)
         },
         onError: (error) => {
@@ -29,7 +48,31 @@ const CreateBook = () => {
         }
     })
 
-    const {register, handleSubmit, formState: {errors, isValid} } = useForm({
+    const {
+        mutate: mutateCreateGenre,
+        isLoading: isLoadingCreateGenre
+    } = useMutation({
+        mutationFn: ({ name }) => {
+            return createGenre({ name })
+        },
+        onSuccess: async (data) => {
+            toast.success("Successfully created genre")
+            console.log(data)
+            // Reset input field
+            setIsAddingGenre(false)
+            setNewGenreName('')
+            // Refetch genre data
+            await queryClient.invalidateQueries('allGenres')
+            // can select newly created genre
+            setSelectedGenres([...selectedGenres, data])
+        },
+        onError: (error) => {
+            toast.error(error.message)
+            console.error(error)
+        }
+    })
+
+    const {register, handleSubmit, formState: {errors, isValid}, getValues } = useForm({
         defaultValues: {
             title: "",
             author: "",
@@ -37,14 +80,29 @@ const CreateBook = () => {
             publishedDate: "",
             language: "",
             ISBN: "",
-            description: ""
+            description: "",
+            genres: []
         },
         mode: "onChange"
     })
 
+    const handleGenreChange = (e, genre) => {
+        const isChecked = e.target.checked
+        if (isChecked) {
+            setSelectedGenres([...selectedGenres, genre]);
+        } 
+        else {
+            setSelectedGenres(selectedGenres.filter((selectedGenre) => selectedGenre._id !== genre._id));
+        }
+    }
+    if (isLoadingGenres) {
+        return <div>Loading genres...</div>
+    }
+
     const submitHandler = (data) => {
         const { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished } = data
-        mutate({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished })
+        const genreIds = selectedGenres.map((genre) => genre._id);
+        mutate({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished, genres: genreIds })
     }
 
     return (
@@ -153,6 +211,61 @@ const CreateBook = () => {
                             />
                             {errors.ISBN?.message && (
                                 <p>{errors.ISBN?.message}</p>
+                            )}
+                        </div>
+                        <div>
+                            <label>Select Genres:</label>
+                            {/* Check if genresData exists before mapping */}
+                            {genresData ? (
+                                genresData.map((genre) => (
+                                    <div key={genre._id}>
+                                        <input
+                                            type="checkbox"
+                                            id={genre._id}
+                                            name="genres"
+                                            value={genre._id}
+                                            onChange={(e) => handleGenreChange(e, genre)}
+                                            checked={selectedGenres.some(
+                                            (selectedGenre) => selectedGenre._id === genre._id
+                                            )}
+                                        />
+                                        <label htmlFor={genre._id}>{genre.name}</label>
+                                    </div>
+                                ))
+                            ) : (
+                                <div>Loading genres...</div>
+                            )}
+                        </div>
+                        {/* Create Genre */}
+                        <div>
+                            <button
+                                type='button'
+                                onClick={() => setIsAddingGenre(!isAddingGenre)}
+                            >
+                                {isAddingGenre ? "Cancel" : "+"}
+                            </button>
+                            {isAddingGenre && (
+                                <div>
+                                    <label>Create New Genre: </label>
+                                    <input 
+                                        type='text'
+                                        name='newGenre'
+                                        {...register('newGenreName')}
+                                        value={newGenreName}
+                                        onChange={(e) => setNewGenreName(e.target.value)}  // update state of input field
+                                    />
+                                    <button
+                                        type='button'
+                                        onClick={() => {
+                                            const name = newGenreName.trim() // Remove leading/trailig spaces
+                                            if(name) {
+                                                mutateCreateGenre({ name })
+                                            }
+                                        }}
+                                    >
+                                        Create Genre
+                                    </button>
+                                </div>
                             )}
                         </div>
                         <div>

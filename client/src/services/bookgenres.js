@@ -11,3 +11,18 @@ export const getAllGenresForBook = async (bookId) => {
         throw new Error (err.message)
     }
 }
+
+export const createBookGenreAssociation = async (bookId, genreId) => {
+    try{
+        const response = await axios.post('http://localhost:8000/bookGenres', {
+            bookId,
+            genreId
+        })
+        return response.data
+    }
+    catch(err) {
+        if (err.response && err.response.data.message) 
+            throw new Error(err.response.data.message)
+        throw new Error (err.message)
+    }
+}
