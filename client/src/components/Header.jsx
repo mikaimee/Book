@@ -32,7 +32,9 @@ const Header = () => {
                         >
                             Profile
                         </button>
-                        <button>
+                        <button
+                            onClick={() => navigate('/addBook')}
+                        >
                             Add Books
                         </button>
                         <button

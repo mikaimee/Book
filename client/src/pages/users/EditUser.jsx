@@ -136,6 +136,7 @@ const EditUser = () => {
                                     }
                                 })}
                                 placeholder='Enter your email'
+                                autoComplete="email"
                             />
                             {errors.email?.message && (
                                 <p>{errors.email?.message}</p>

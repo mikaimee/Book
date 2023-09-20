@@ -11,13 +11,18 @@ const Profile = () => {
     const userState = useSelector((state) => state.user);
 
     const {
-        data: profileData
+        data: profileData,
+        isLoading,
+        isError,
+        error
     } = useQuery({
         queryFn: () => {
             return getUserProfile({ token: userState?.userInfo?.token })
         },
         queryKey: ["profile"]
     })
+
+    // console.log('profileData:', profileData)
     
     useEffect(() => {
         if (!userState.userInfo) {
@@ -30,9 +35,17 @@ const Profile = () => {
             <section>
                 <div>
                     <h1>Profile</h1>
-                    <p>First Name: {profileData.firstName}</p>
-                    <p>Last Name: {profileData.lastName}</p>
-                    <p>Email: {profileData.email}</p>
+                    {isLoading && <div>Loading...</div>}
+                    {isError && (
+                        <div>Error: {error.message}</div>
+                    )}
+                    {profileData && (
+                        <div>
+                            <p>First Name: {profileData?.firstName}</p>
+                            <p>Last Name: {profileData?.lastName}</p>
+                            <p>Email: {profileData?.email}</p>
+                        </div>
+                    )}
                 </div>
                 <div>
                     <Link to="/user/edit">

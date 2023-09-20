@@ -164,5 +164,6 @@ module.exports = {
     deleteBook, 
     singleBook,
     searchBooks,
-    filterBooks
+    filterBooks,
+    
 }

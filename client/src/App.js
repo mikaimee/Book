@@ -7,6 +7,8 @@ import Register from './pages/auth/Register';
 import Login from './pages/auth/Login'
 import Profile from './pages/users/Profile';
 import EditUser from './pages/users/EditUser';
+import CreateBook from './pages/books/CreateBook'
+import BookDetails from './pages/books/BookDetails';
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/user/profile" element={<Profile/>}/>
         <Route path="/user/edit" element={<EditUser/>}/>
+        <Route path="/addBook" element={<CreateBook/>} />
+        <Route path="/book/:bookId" element={<BookDetails/>} />
       </Routes>
       <Toaster/>
     </div>
