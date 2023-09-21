@@ -4,15 +4,19 @@ const User = require('../models/User')
 
 const createReview = async (req, res) => {
     try {
-        const { bookId, userId, rating, text } = req.body
+        const { bookId, rating, text } = req.body
 
         const book = await Book.findById(bookId)
-        const user = await User.findById(userId)
-        if (!book || !user) {
-            return res.status(400).json({ error: "Book or user is not found" })
+        if (!book) {
+            return res.status(400).json({ error: "Book is not found" })
         }
 
-        const review = new Review({ book, user, rating, text })
+        const review = new Review({ 
+            user: req.user._id,
+            book, 
+            rating, 
+            text 
+        })
         await review.save()
         res.status(201).json({ message: "Review created successfully", review })
     }

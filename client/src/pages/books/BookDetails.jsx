@@ -5,10 +5,12 @@ import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
 import { getBookDetails } from '../../services/book'
 import { getAllGenresForBook } from '../../services/bookgenres'
+import ReviewContainer from '../../components/reviews/ReviewContainer'
 
 const BookDetails = () => {
 
     const { bookId } = useParams()
+    const userState = useSelector((state) => state.user);
 
     const navigate = useNavigate()
 
@@ -83,6 +85,11 @@ const BookDetails = () => {
                         Add Book To Library
                     </button>
                 </div>
+                <ReviewContainer 
+                    reviews={detailData?.reviews}
+                    loginUserId={userState?.userInfo?._id}
+                    bookId={bookId}
+                />
             </section>
         </Layout>
     )
