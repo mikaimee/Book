@@ -9,6 +9,7 @@ import Profile from './pages/users/Profile';
 import EditUser from './pages/users/EditUser';
 import CreateBook from './pages/books/CreateBook'
 import BookDetails from './pages/books/BookDetails';
+import EditBook from './pages/books/EditBook';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/user/edit" element={<EditUser/>}/>
         <Route path="/addBook" element={<CreateBook/>} />
         <Route path="/book/:bookId" element={<BookDetails/>} />
+        <Route path="/book/:bookId/edit" element={<EditBook />} />
       </Routes>
       <Toaster/>
     </div>

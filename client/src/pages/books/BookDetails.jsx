@@ -23,17 +23,17 @@ const BookDetails = () => {
     );
     console.log('detailData:', detailData)
 
-        // GENRE
-        const {
-            data: genreData,
-            isLoading: genreIsLoading,
-            isError: genreIsError,
-            error: genreError,
-        } = useQuery(
-            ["genresForBook", bookId],
-            () => getAllGenresForBook(bookId)
-        )
-        console.log('genreData:', genreData)
+    // GENRE
+    const {
+        data: genreData,
+        isLoading: genreIsLoading,
+        isError: genreIsError,
+        error: genreError,
+    } = useQuery(
+        ["genresForBook", bookId],
+        () => getAllGenresForBook(bookId)
+    )
+    console.log('genreData:', genreData)
 
     if (detailIsLoading || genreIsLoading) {
         return <div>Loading...</div>
@@ -51,6 +51,12 @@ const BookDetails = () => {
         <Layout>
             <section>
                 <div>
+                    <button
+                        type='button'
+                        onClick={() => navigate(`/book/${detailData?._id}/edit`)}
+                    >
+                        Edit
+                    </button>
                     <h2>{ detailData?.title }</h2>
                     <p>Author: { detailData?.author }</p>
                     <p>Pages: { detailData?.pages }</p>

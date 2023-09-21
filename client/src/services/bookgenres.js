@@ -26,3 +26,15 @@ export const createBookGenreAssociation = async (bookId, genreId) => {
         throw new Error (err.message)
     }
 }
+
+export const removeBookGenreAssociation = async (associationId) => {
+    try{
+        const { data } = await axios.delete(`http://localhost:8000/bookGenres/${associationId}`)
+        return data
+    }
+    catch(err) {
+        if (err.response && err.response.data.message) 
+            throw new Error(err.response.data.message)
+        throw new Error (err.message)
+    }
+}

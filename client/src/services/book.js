@@ -49,3 +49,15 @@ export const getBookDetails = async (bookId) => {
         throw new Error (err.message)
     }
 }
+
+export const editBook = async ({bookData, bookId}) => {
+    try{
+        const { data } = await axios.patch(`http://localhost:8000/books/${bookId}`, bookData)
+        return data
+    }
+    catch(err) {
+        if (err.response && err.response.data.message) 
+            throw new Error(err.response.data.message)
+        throw new Error (err.message)
+    }
+}
