@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Layout from '../../components/Layout'
 import { getBookDetails, editBook } from '../../services/book'
 import { getAllGenresForBook, createBookGenreAssociation, removeBookGenreAssociation } from '../../services/bookgenres'
@@ -10,16 +10,12 @@ import { useForm } from 'react-hook-form'
 
 const EditBook = () => {
 
-    // Still Needs work on the genres
-
     const { bookId } = useParams()
 
     const navigate = useNavigate()
     const queryClient = useQueryClient()
     const [newGenreName, setNewGenreName] = useState('')
     const [isAddingGenre, setIsAddingGenre] = useState(false)
-    const [associatedGenres, setAssociatedGenres] = useState([]);
-    const [unassociatedGenres, setUnassociatedGenres] = useState([]);
     
     // Retrieve book details
     const {
@@ -51,12 +47,27 @@ const EditBook = () => {
     )
     console.log('genreBookData:', genreBookData)
 
-    
-    // state to track selected genres
-    const [selectedGenres, setSelectedGenres] = useState(
-        genreBookData?.map((genre) => genre._id || []) || []
-    )
+    // Creating the selectedGenres array
+    const [selectedGenres, setSelectedGenres] = useState([])
+    const [unassociatedGenres, setUnassociatedGenres] = useState([])
 
+    useEffect(() => {
+        if (allGenresData) {
+            // Extract genre IDs from genreBookData
+            const genreIds = genreBookData?.map((genre) => genre.genre._id) || [];
+    
+            // Filter unassociatedGenres based on genreIds
+            const unassociated = allGenresData.filter((genre) => (
+                !genreIds.includes(genre._id)
+            ));
+            
+            setSelectedGenres(genreIds);
+            setUnassociatedGenres(unassociated);
+        }
+    }, [allGenresData, genreBookData])
+
+
+    // EDIT BOOK
     const {
         mutate: editBookMutate,
         isLoading: editBookIsLoading,
@@ -78,6 +89,7 @@ const EditBook = () => {
         }
     })
 
+    // CREATE GENRE
     const {
         mutate: mutateCreateGenre,
         isLoading: isLoadingCreateGenre
@@ -98,6 +110,7 @@ const EditBook = () => {
         }
     })
 
+    // USEFORM
     const {register, handleSubmit, formState: { errors, isValid }} = useForm({
         defaultValues: {
             title: "",
@@ -124,34 +137,48 @@ const EditBook = () => {
         mode: 'onChange'
     })
 
-    // const handleGenreChange = (genreId) => {
-    //     if (selectedGenres.includes(genreId)) {
-    //         setSelectedGenres((prevSelectedGenres) =>
-    //             prevSelectedGenres.filter((id) => id !== genreId)
-    //         )
-    //         removeBookGenreAssociation(bookId, genreId)
-    //     }
-    //     else {
-    //         setSelectedGenres((prevSelectedGenres) => [...prevSelectedGenres, genreId])
-    //         createBookGenreAssociation(bookId, genreId)
-    //     }
-    // }
-
-    const handleGenreClick = (genre) => {
-        // Check if the genre is associated with the book
-        const genreId = genre._id
-        if (selectedGenres.some((selectedGenre) => selectedGenre._id === genreId)) {
-            setSelectedGenres((prevSelectedGenres) =>
-                prevSelectedGenres.filter((selectedGenre) => selectedGenre._id !== genreId)
-            );
-            removeBookGenreAssociation(bookId, genreId);
-        } else {
-            setSelectedGenres((prevSelectedGenres) => [...prevSelectedGenres, genre]);
-            createBookGenreAssociation(bookId, genreId);
+    // Handles Creating the association by adding it to the selectedGenres array 
+    const handleAssociationClick = async (genre) => {
+        try {
+            const genreId = genre._id
+            // Check if genre is associated with book
+            if (!selectedGenres.some((selectedGenre) => selectedGenre._id === genreId)) {
+                // Select genre
+                setSelectedGenres((prevSelectedGenres) => [...prevSelectedGenres, genre])
+                // Filter out genre from unassociated genres
+                setUnassociatedGenres((prevUnassociatedGenres) =>
+                    prevUnassociatedGenres.filter((unassociatedGenre) => unassociatedGenre._id !== genreId)
+                )
+                // Add association to database
+                await createBookGenreAssociation(bookId, genreId)
+            }
         }
-        // setUnassociatedGenres((prevUnassociatedGenres) =>
-        //     prevUnassociatedGenres.filter((genreId) => genreId !== genreId)
-        // );
+        catch (error) {
+            console.error('Error in handleAssociationClick: ', error)
+        }
+    }
+
+    // Handles Removing the association between book and genre + moves to unassociated array
+    const handleRemoveGenreClick = async (genre) => {
+        try {
+            const genreId = genre._id
+            // Find association ID basedon genre being unselected
+            const association = genreBookData.find((association) => association.genre._id === genreId)
+            if (association) {
+                const associationId = association._id
+                // Remove the association from the database
+                await removeBookGenreAssociation(associationId)
+                // Deselect genre
+                setSelectedGenres((prevSelectedGenres) =>
+                    prevSelectedGenres.filter((selectedGenre) => selectedGenre._id !== genreId)
+                )
+                // Add genre back to unassociated genres
+                setUnassociatedGenres((prevUnassociatedGenres) => [...prevUnassociatedGenres, genre])
+            }
+        }
+        catch (error) {
+            console.error('Error in handleRemoveGenreClick: ', error)
+        }
     }
 
     const handleCreateNewGenre = async () => {
@@ -293,51 +320,43 @@ const EditBook = () => {
                                 <p>{errors.ISBN?.message}</p>
                             )}
                         </div>
-                        {/* <div>
-                            {allGenresData ? (
-                                allGenresData.map((genre) => (
-                                <div key={genre._id}>
-                                    <input
-                                        type='checkbox'
-                                        name='genres'
-                                        id={genre._id}
-                                        value={genre._id}
-                                        checked={selectedGenres.includes(genre._id)}
-                                        onChange={() => handleGenreChange(genre._id)}
-                                    />
-                                    <label htmlFor={genre._id}>{genre.name}</label>
-                                </div>
-                            ))
-                            ) : (
-                                <div>Loading genres...</div>
-                            )}
-                        </div> */}
                         <div>
-                            <h2>Genres: </h2>
                             <div>
-                                <h3>The book's genres: </h3>
-                                {genreBookData.map((genre) => (
-                                <div 
-                                    key={genre._id}
-                                    onClick={() => handleGenreClick(genre.genre)}
-                                >
-                                    {genre.genre.name}
-                                </div>
-                            ))}
+                                <h3>Genres: </h3>
+                                {selectedGenres.map((genreId) => {
+                                    // Find the corresponding genre in allGenresData
+                                    const genre = allGenresData.find((genre) => genre._id === genreId);
+                                    return (
+                                        <div key={genreId}>
+                                            {genre ? (
+                                                <span>{genre.name}</span>
+                                            ): (
+                                                <span>Genre not found</span>
+                                            )}
+                                            <button
+                                                type='button'
+                                                onClick={() => handleRemoveGenreClick(genre)}
+                                            >
+                                                X
+                                            </button>
+                                        </div>
+                                    );
+                                })}
                             </div>
                             <div>
-                                <h3>Other genres to choose from: </h3>
-                                {unassociatedGenres.map((genreId) => {
-                                    const genre = allGenresData.find((genre) => genre._id === genreId)
-                                    return (
-                                        <div 
+                                <h3>Other Genres: </h3>
+                                {allGenresData ? (
+                                    unassociatedGenres.map((genre) => (
+                                        <div
                                             key={genre._id}
-                                            onClick={() => handleGenreClick(genre)}
+                                            onClick={() => handleAssociationClick(genre)}
                                         >
                                             {genre.name}
                                         </div>
-                                    )
-                                })}
+                                    ))
+                                ) : (
+                                    <p>Loading genres...</p>
+                                )}
                             </div>
                         </div>
                         <div>
@@ -369,6 +388,22 @@ const EditBook = () => {
                                     Create Genre
                                 </button>
                             </div>
+                            )}
+                        </div>
+                        <div>
+                            <label htmlFor="description">Description</label>
+                            <textarea
+                                id='description'
+                                {...register("description", {
+                                    required: {
+                                        value: true,
+                                        message: "Description is required"
+                                    }
+                                })}
+                                placeholder='Enter description'
+                            />
+                            {errors.description?.message && (
+                                <p>{errors.description?.message}</p>
                             )}
                         </div>
                         <div>
