@@ -38,3 +38,15 @@ export const removeBookGenreAssociation = async (associationId) => {
         throw new Error (err.message)
     }
 }
+
+export const getAllBooksforGenre = async (genreId) => {
+    try {
+        const response = await axios.get(`http://localhost:8000/bookGenres/genre/${genreId}`)
+        return response.data
+    }
+    catch(err) {
+        if (err.response && err.response.data.message) 
+            throw new Error(err.response.data.message)
+        throw new Error (err.message)
+    }
+}

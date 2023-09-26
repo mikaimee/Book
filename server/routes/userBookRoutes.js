@@ -5,6 +5,9 @@ const userBookController = require('../controllers/userBookController')
 router.route('/')
     .post(userBookController.createUserBookAssociation)
 
+router.route('/user/:userId')
+    .get(userBookController.getAllBooksForUser)
+
 router.route('/:associationId')
     .delete(userBookController.removeAssociation)
     .patch(userBookController.updateAssociation)
