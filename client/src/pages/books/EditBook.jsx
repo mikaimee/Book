@@ -48,7 +48,7 @@ const EditBook = () => {
         ["genresForBook", bookId],
         () => getAllGenresForBook(bookId)
     )
-    console.log('genreBookData:', genreBookData)
+    // console.log('genreBookData:', genreBookData)
 
     // Creating the selectedGenres array
     const [selectedGenres, setSelectedGenres] = useState([])
@@ -124,13 +124,13 @@ const EditBook = () => {
         },
         queryKey: ["library"]
     })
-    console.log('Library: ', libraryData)
+    // console.log('Library: ', libraryData)
 
     // Find userAssociation based on bookId
     const userAssociation = libraryData?.find(association => association.book._id === bookId)
 
     // USEFORM
-    const {register, handleSubmit, formState: { errors, isValid }, control} = useForm({
+    const {register, handleSubmit, formState: { errors, isValid }, control, watch} = useForm({
         defaultValues: {
             title: "",
             author: "",
@@ -201,26 +201,27 @@ const EditBook = () => {
         }
     }
 
-    const handleCreateNewGenre = async () => {
-        try{
-            const name = newGenreName.trim()
-            if (name) {
-                const response = await createGenre({ name })
-                if (response) {
-                    setSelectedGenres([...selectedGenres, response])
-                    setNewGenreName('')
-                    setIsAddingGenre(false)
-                }
-            }
-        }
-        catch (error) {
-            console.error(error)
-        }
-    }
-
     const submitHandler = (data) => {
         const { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished } = data
-        editBookMutate({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished, genres: selectedGenres })
+        console.log('Data before update: ', data)
+        if (readerStatus === 'Yet to Start') {
+            data.readerStarted = null;
+            data.readerFinished = null
+            console.log('Updating readerFinished to:', data.readerFinished)
+            console.log('Updating readerStarted to:', data.readerStarted)
+        } 
+        else if (readerStatus === 'In Progress') {
+            data.readerStarted = new Date().toISOString();
+            console.log('Updating readerStarted to:', data.readerStarted)
+        }
+        
+        if (readerStatus === 'Complete') {
+            data.readerFinished = new Date().toISOString()
+            console.log('Updating readerFinished to:', data.readerFinished)
+        }
+        console.log('Form data after update:', data)
+        // editBookMutate({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted: readerStarted, readerFinished: readerFinished, genres: selectedGenres })
+        editBookMutate(data, {genres: selectedGenres})
     }
 
     if(detailIsLoading || isLoadingGenres) {
@@ -443,6 +444,9 @@ const EditBook = () => {
                                         </div>
                                     )}
                                 />
+                                {errors.readerStatus?.message && (
+                                    <p>{errors.readerStatus?.message}</p>
+                                )}
                             </div>
                         )}
                         <div>

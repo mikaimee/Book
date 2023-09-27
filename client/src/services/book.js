@@ -40,7 +40,11 @@ export const createBook = async ({
 
 export const getBookDetails = async (bookId) => {
     try {
-        const response = await axios.get(`http://localhost:8000/books/${bookId}`)
+        const response = await axios.get(`http://localhost:8000/books/${bookId}`, {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': 0
+        })
         return response.data.book
     }  
     catch(err) {

@@ -82,6 +82,14 @@ const BookDetails = () => {
         userBookMutate({ bookId })
     }
 
+    const formatDate = (dateString) => {
+        if (!dateString) {
+            return "No date available"
+        }
+        const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    }
+
     if (detailIsLoading || genreIsLoading || userBookIsLoading || libraryisLoading) {
         return <div>Loading...</div>
     }
@@ -125,8 +133,8 @@ const BookDetails = () => {
                     {userAssociation && (
                         <div>
                             <p>Status: {detailData?.readerStatus}</p>
-                            <p>Start Date: {detailData?.readerStarted || "No date available"}</p>
-                            <p>Finish Date: {detailData?.readerFinished || "No date available"}</p>
+                            <p>Start Date: {formatDate(detailData?.readerStarted)}</p>
+                            <p>Finish Date: {formatDate(detailData?.readerFinished)}</p>
                         </div>
                     )}
                 </div>
