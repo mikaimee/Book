@@ -4,7 +4,8 @@ const Book = require('../models/Book')
 
 const createUserBookAssociation = async (req, res) => {
     try {
-        const { bookId, userId } = req.body
+        const { bookId } = req.body
+        const userId = req.user._id
 
         const existingAssociation = await UserBook.findOne({ book: bookId, user: userId })
         if (existingAssociation) {
@@ -76,7 +77,7 @@ const updateAssociation = async (req, res) => {
 // Retrieve all books for a single user
 const getAllBooksForUser = async (req, res) => {
     try {
-        const { userId } = req.params
+        const userId = req.user._id
         const associations = await UserBook.find({ user: userId })
             .populate('book')  // populate genre details
         res.status(200).json(associations)

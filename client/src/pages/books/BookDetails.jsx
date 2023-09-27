@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Layout from '../../components/Layout'
-import { useNavigate, Link, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getBookDetails } from '../../services/book'
 import { getAllGenresForBook } from '../../services/bookgenres'
+import { getAllBooksForUser, createUserBookAssociation } from '../../services/userbooks'
 import ReviewContainer from '../../components/reviews/ReviewContainer'
+import toast from 'react-hot-toast'
 
 const BookDetails = () => {
 
@@ -13,7 +15,9 @@ const BookDetails = () => {
     const userState = useSelector((state) => state.user);
 
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
 
+    // GET DETAILS OF BOOK
     const {
         data: detailData,
         isLoading: detailIsLoading,
@@ -35,16 +39,57 @@ const BookDetails = () => {
         ["genresForBook", bookId],
         () => getAllGenresForBook(bookId)
     )
-    console.log('genreData:', genreData)
+    // console.log('genreData:', genreData)
 
-    if (detailIsLoading || genreIsLoading) {
+    // GET USER ASSOCIATION
+    const {
+        data: libraryData,
+        isLoading: libraryisLoading,
+        isError: libaryIsError,
+        error: libraryError
+    } = useQuery({
+        queryFn: () => {
+            return getAllBooksForUser({ token: userState?.userInfo?.token })
+        },
+        queryKey: ["library"]
+    })
+    console.log('Library: ', libraryData)
+
+    // Find userAssociation based on bookId
+    const userAssociation = libraryData?.find(association => association.book._id === bookId)
+    const renderAddLibraryButton = !userAssociation && userState?.userInfo?.token
+
+    // CREATE USER/BOOK ASSICOATION
+    const {
+        mutate: userBookMutate,
+        isLoading: userBookIsLoading
+    } = useMutation({
+        mutationFn: ({ bookId }) => {
+            return createUserBookAssociation({ bookId, token: userState?.userInfo?.token })
+        },
+        onSuccess: (
+        ) => {
+            toast.success("Suucessfully added to your library")
+            queryClient.invalidateQueries(["library", { token: userState?.userInfo?.token }])
+        },
+        onError: (error) => {
+            toast.error(error.message)
+            console.error(error)
+        }
+    })
+
+    const handleAddLibrary = () =>{
+        userBookMutate({ bookId })
+    }
+
+    if (detailIsLoading || genreIsLoading || userBookIsLoading || libraryisLoading) {
         return <div>Loading...</div>
     }
 
-    if (detailIsError || genreIsError) {
+    if (detailIsError || genreIsError || libaryIsError) {
         return (
             <div>
-                Error: {detailError?.message || genreError?.message}
+                Error: {detailError?.message || genreError?.message|| libraryError?.message}
             </div>
         ) 
     }
@@ -77,13 +122,22 @@ const BookDetails = () => {
                     <p>Description: { detailData?.description }</p>
 
                     {/* If the user is logged in and the book + user association exists show the readerstatus, readerstart, readerfinished */}
+                    {userAssociation && (
+                        <div>
+                            <p>Status: {detailData?.readerStatus}</p>
+                            <p>Start Date: {detailData?.readerStarted || "No date available"}</p>
+                            <p>Finish Date: {detailData?.readerFinished || "No date available"}</p>
+                        </div>
+                    )}
                 </div>
                 <div>
-                    {/* Only show this button if the user if logged in + if no bookuser association exists */}
-                    <button
-                    >
-                        Add Book To Library
-                    </button>
+                    {!userAssociation && renderAddLibraryButton && (
+                        <button
+                            onClick={handleAddLibrary}
+                        >
+                            Add Book To Library
+                        </button>
+                    )}
                 </div>
                 <ReviewContainer 
                     reviews={detailData?.reviews}

@@ -10,6 +10,7 @@ import EditUser from './pages/users/EditUser';
 import CreateBook from './pages/books/CreateBook'
 import BookDetails from './pages/books/BookDetails';
 import EditBook from './pages/books/EditBook';
+import MyLibrary from './pages/Library/MyLibrary';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/user/profile" element={<Profile/>}/>
         <Route path="/user/edit" element={<EditUser/>}/>
+        <Route path="/myLibrary/:userId/" element={<MyLibrary/>} />
         <Route path="/addBook" element={<CreateBook/>} />
         <Route path="/book/:bookId" element={<BookDetails/>} />
         <Route path="/book/:bookId/edit" element={<EditBook />} />

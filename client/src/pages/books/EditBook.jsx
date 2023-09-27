@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Layout from '../../components/Layout'
+import { useSelector } from 'react-redux'
 import { getBookDetails, editBook } from '../../services/book'
 import { getAllGenresForBook, createBookGenreAssociation, removeBookGenreAssociation } from '../../services/bookgenres'
 import { allGenres, createGenre } from '../../services/genre'
+import { getAllBooksForUser } from '../../services/userbooks'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 
 const EditBook = () => {
 
@@ -14,10 +16,11 @@ const EditBook = () => {
 
     const navigate = useNavigate()
     const queryClient = useQueryClient()
+    const userState = useSelector((state) => state.user)
     const [newGenreName, setNewGenreName] = useState('')
     const [isAddingGenre, setIsAddingGenre] = useState(false)
     
-    // Retrieve book details
+    // GET BOOK DETAILS
     const {
         data: detailData,
         isLoading: detailIsLoading,
@@ -29,13 +32,13 @@ const EditBook = () => {
     );
     console.log('detailData:', detailData)
 
-    // Retrieve all Genres
+    // GET ALL GENRES
     const {
         data: allGenresData,
         isLoading: isLoadingGenres,
     } = useQuery(['allGenres'], allGenres);
 
-    // Retrieve all genres for book
+    // GET ALL GENRES FOR BOOK
     const {
         data: genreBookData,
         isLoading: genreBookIsLoading,
@@ -65,7 +68,6 @@ const EditBook = () => {
             setUnassociatedGenres(unassociated);
         }
     }, [allGenresData, genreBookData])
-
 
     // EDIT BOOK
     const {
@@ -110,8 +112,25 @@ const EditBook = () => {
         }
     })
 
+    // GET USER ASSOCIATION
+    const {
+        data: libraryData,
+        isLoading: libraryisLoading,
+        isError: libaryIsError,
+        error: libraryError
+    } = useQuery({
+        queryFn: () => {
+            return getAllBooksForUser({ token: userState?.userInfo?.token })
+        },
+        queryKey: ["library"]
+    })
+    console.log('Library: ', libraryData)
+
+    // Find userAssociation based on bookId
+    const userAssociation = libraryData?.find(association => association.book._id === bookId)
+
     // USEFORM
-    const {register, handleSubmit, formState: { errors, isValid }} = useForm({
+    const {register, handleSubmit, formState: { errors, isValid }, control} = useForm({
         defaultValues: {
             title: "",
             author: "",
@@ -132,6 +151,7 @@ const EditBook = () => {
                 ISBN: detailIsLoading ? "" : detailData.ISBN,
                 description: detailIsLoading ? "" : detailData.description,
                 genres: detailIsLoading ? [] : detailData.genres,
+                readerStatus: detailIsLoading? "" : detailData.readerStatus
             }
         }, [detailData, detailIsLoading]),
         mode: 'onChange'
@@ -406,6 +426,25 @@ const EditBook = () => {
                                 <p>{errors.description?.message}</p>
                             )}
                         </div>
+                        {userAssociation && (
+                            <div>
+                                <label htmlFor='readerStatus'>Status: </label>
+                                <Controller
+                                    name='readerStatus'
+                                    control={control}
+                                    defaultValue={detailData?.readerStatus}
+                                    render={({ field }) => (
+                                        <div>
+                                            <select {...field}>
+                                                <option value='Yet to Start'>Yet to Start</option>
+                                                <option value='In Progress'>In Progress</option>
+                                                <option value='Complete'>Complete</option>
+                                            </select>
+                                        </div>
+                                    )}
+                                />
+                            </div>
+                        )}
                         <div>
                             <button type="submit" disabled={!isValid || editBookIsLoading}>
                                 Save
