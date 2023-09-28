@@ -44,19 +44,6 @@ const BookSchema = new Schema({
     },
     coverImage: {
         type: String
-    },
-    readerStatus: {
-        type: String,
-        enum: ['Yet to Start', 'In Progress', 'Complete'],
-        default: 'Yet to Start'
-    },
-    readerStarted: {
-        type: Date,
-        default: null
-    },
-    readerFinished: {
-        type: Date,
-        default: null
     }
 }, {timestamps: true, toJSON: { virtuals: true }})
 

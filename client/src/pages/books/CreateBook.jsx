@@ -26,8 +26,8 @@ const CreateBook = () => {
         mutate,
         isLoading: isLoadingCreatingBook
     } = useMutation({
-        mutationFn: ({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished }) => {
-            return createBook({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished })
+        mutationFn: ({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage }) => {
+            return createBook({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage })
         },
         onSuccess: async (data) => {
             toast.success("Successfylly created book")
@@ -100,9 +100,9 @@ const CreateBook = () => {
     }
 
     const submitHandler = (data) => {
-        const { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished } = data
+        const { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage } = data
         const genreIds = selectedGenres.map((genre) => genre._id);
-        mutate({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished, genres: genreIds })
+        mutate({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, genres: genreIds })
     }
 
     return (

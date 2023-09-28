@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getBookDetails } from '../../services/book'
 import { getAllGenresForBook } from '../../services/bookgenres'
-import { getAllBooksForUser, createUserBookAssociation } from '../../services/userbooks'
+import { getAllBooksForUser, createUserBookAssociation, getLibraryDetails } from '../../services/userbooks'
+import { getUserProfile } from '../../services/user'
 import ReviewContainer from '../../components/reviews/ReviewContainer'
 import toast from 'react-hot-toast'
 
@@ -41,31 +42,45 @@ const BookDetails = () => {
     )
     // console.log('genreData:', genreData)
 
-    // GET USER ASSOCIATION
+    // USER INFORMATION TO OBTAIN ASSOCIATION ID
+    const {
+        data: profileData
+    } = useQuery({
+        queryFn: () => {
+            return getUserProfile({ token: userState?.userInfo?.token })
+        },
+        queryKey: ["profile"]
+    })
+    console.log('profileData:', profileData)
+
+    const matchingLibraryEntry = profileData?.library.find(
+        (libraryEntry) => libraryEntry.book === bookId
+    )
+
     const {
         data: libraryData,
-        isLoading: libraryisLoading,
-        isError: libaryIsError,
+        isLoading: libraryIsLoading,
+        isError: libraryIsError,
         error: libraryError
     } = useQuery({
         queryFn: () => {
-            return getAllBooksForUser({ token: userState?.userInfo?.token })
+            return getLibraryDetails({ token: userState?.userInfo?.token, associationId: matchingLibraryEntry._id })
         },
         queryKey: ["library"]
     })
-    console.log('Library: ', libraryData)
+    console.log("Library Data: ", libraryData)
 
-    // Find userAssociation based on bookId
-    const userAssociation = libraryData?.find(association => association.book._id === bookId)
+    const userAssociation = libraryData
     const renderAddLibraryButton = !userAssociation && userState?.userInfo?.token
+
 
     // CREATE USER/BOOK ASSICOATION
     const {
         mutate: userBookMutate,
         isLoading: userBookIsLoading
     } = useMutation({
-        mutationFn: ({ bookId }) => {
-            return createUserBookAssociation({ bookId, token: userState?.userInfo?.token })
+        mutationFn: ({ bookId, readerStatus, readerStarted, readerFinished }) => {
+            return createUserBookAssociation({ bookId, token: userState?.userInfo?.token, readerStatus, readerStarted, readerFinished })
         },
         onSuccess: (
         ) => {
@@ -90,14 +105,14 @@ const BookDetails = () => {
         return new Date(dateString).toLocaleDateString(undefined, options);
     }
 
-    if (detailIsLoading || genreIsLoading || userBookIsLoading || libraryisLoading) {
+    if (detailIsLoading || genreIsLoading || userBookIsLoading || libraryIsLoading ) {
         return <div>Loading...</div>
     }
 
-    if (detailIsError || genreIsError || libaryIsError) {
+    if (detailIsError || genreIsError || libraryIsError) {
         return (
             <div>
-                Error: {detailError?.message || genreError?.message|| libraryError?.message}
+                Error: {detailError?.message || genreError?.message || libraryError?.message}
             </div>
         ) 
     }
@@ -128,16 +143,14 @@ const BookDetails = () => {
                     
                     <p>ISBN: { detailData?.ISBN }</p>
                     <p>Description: { detailData?.description }</p>
-
-                    {/* If the user is logged in and the book + user association exists show the readerstatus, readerstart, readerfinished */}
-                    {userAssociation && (
-                        <div>
-                            <p>Status: {detailData?.readerStatus}</p>
-                            <p>Start Date: {formatDate(detailData?.readerStarted)}</p>
-                            <p>Finish Date: {formatDate(detailData?.readerFinished)}</p>
-                        </div>
-                    )}
                 </div>
+                {userAssociation && (
+                    <div>
+                        <p>Reader Status: {libraryData?.association?.readerStatus}</p>
+                        <p>Start Date: {formatDate(libraryData?.association?.readerStarted)}</p>
+                        <p>Finish Date: {formatDate(libraryData?.association?.readerFinished)}</p>
+                    </div>
+                )}
                 <div>
                     {!userAssociation && renderAddLibraryButton && (
                         <button

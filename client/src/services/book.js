@@ -9,10 +9,7 @@ export const createBook = async ({
     language,
     ISBN,
     slug,
-    coverImage,
-    readerStatus,
-    readerStarted,
-    readerFinished
+    coverImage
     }) => {
         try{
             const { data } = await axios.post('http://localhost:8000/books/', {
@@ -24,10 +21,7 @@ export const createBook = async ({
                 language,
                 ISBN,
                 slug,
-                coverImage,
-                readerStatus,
-                readerStarted,
-                readerFinished
+                coverImage
             })
             return data
         }

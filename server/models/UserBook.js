@@ -11,6 +11,19 @@ const UserBookSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    readerStatus: {
+        type: String,
+        enum: ['Yet to Start', 'In Progress', 'Complete'],
+        default: 'Yet to Start'
+    },
+    readerStarted: {
+        type: Date,
+        default: null
+    },
+    readerFinished: {
+        type: Date,
+        default: null
     }
 }, {timestamps: true})
 

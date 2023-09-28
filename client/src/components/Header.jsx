@@ -38,6 +38,11 @@ const Header = () => {
                             Add Books
                         </button>
                         <button
+                            onClick={() => navigate('/myLibrary')}
+                        >
+                            My Library
+                        </button>
+                        <button
                             type='button'
                             onClick={logoutHandler}
                         >

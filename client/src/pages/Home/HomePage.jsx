@@ -10,7 +10,7 @@ import BooksByGenre from '../../components/home/BooksByGenre'
 
 const HomePage = () => {
 
-    // Retrieve all genres
+    //Retrieve all genres
     const {
         data: genresData,
         isLoading: isLoadingGenres,

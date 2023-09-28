@@ -8,7 +8,7 @@ const allUsers = async(req, res) => {
 
 const oneUser = async(req, res) => {
     try {
-        let user = await User.findById(req.user._id)
+        let user = await User.findById(req.user._id).populate('library')
 
         if(user) {
             return res.status(201).json({

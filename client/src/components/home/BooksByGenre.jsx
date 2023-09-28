@@ -59,9 +59,9 @@ const BooksByGenre = ({ genreName }) => {
         <div>
             <h2>{genreName}</h2>
             {genreBooksData.map(book => (
-                <div key={book.book._id}>
-                    <h3>{book.book.title}</h3>
-                    <p>{book.book.author}</p>
+                <div key={book?.book?._id}>
+                    <h3>{book?.book?.title}</h3>
+                    <p>{book?.book?.author}</p>
                 </div>
             ))}
         </div>

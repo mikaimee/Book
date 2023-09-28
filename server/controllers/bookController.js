@@ -26,7 +26,7 @@ const allBooks = async (req, res) => {
 
 const createBook = async (req, res) => {
     try {
-        const { title, author, pages, publishedDate, description, language, readerStatus, readerStarted, readerFinished, ISBN,  coverImage } = req.body
+        const { title, author, pages, publishedDate, description, language, ISBN,  coverImage } = req.body
 
         const book = new Book({
             title,
@@ -35,10 +35,7 @@ const createBook = async (req, res) => {
             ISBN,
             publishedDate,
             description,
-            language, 
-            readerStatus,
-            readerStarted,
-            readerFinished,
+            language,
             coverImage,
             slug: uuid()
         })

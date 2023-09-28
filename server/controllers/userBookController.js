@@ -4,7 +4,7 @@ const Book = require('../models/Book')
 
 const createUserBookAssociation = async (req, res) => {
     try {
-        const { bookId } = req.body
+        const { bookId, readerStatus, readerStarted, readerFinished } = req.body
         const userId = req.user._id
 
         const existingAssociation = await UserBook.findOne({ book: bookId, user: userId })
@@ -12,7 +12,7 @@ const createUserBookAssociation = async (req, res) => {
             return res.status(400).json({ error: "Association already exists "})
         }
 
-        const userBook = new UserBook({ book: bookId, user: userId })
+        const userBook = new UserBook({ book: bookId, user: userId, readerStatus, readerStarted, readerFinished })
         await userBook.save()
 
         const user = await User.findById(userId)
@@ -43,6 +43,9 @@ const removeAssociation = async (req, res) => {
                 await user.save()
             }
         }
+        else {
+            console.error("User not found for association:", associationId)
+        }
 
         await UserBook.findByIdAndDelete(associationId)
 
@@ -57,16 +60,13 @@ const removeAssociation = async (req, res) => {
 const updateAssociation = async (req, res) => {
     try{
         const { associationId } = req.params
-        const { readerStatus } = req.body
+        const updateData = req.body
 
-        const association = await UserBook.findById(associationId)
+        const association = await UserBook.findByIdAndUpdate(associationId, updateData, { new: true })
         if (!association) {
             return res.status(404).json({ error: "Association does not exist" })
         }
-        association.book.readerStatus = readerStatus
-        await association.book.save()
-
-        res.status(200).json({ message: "Association updated successfullly "})
+        res.status(200).json({ message: "Association updated successfullly", association})
     }
     catch (error) {
         console.error(error)
@@ -79,7 +79,7 @@ const getAllBooksForUser = async (req, res) => {
     try {
         const userId = req.user._id
         const associations = await UserBook.find({ user: userId })
-            .populate('book')  // populate genre details
+            .populate('book')  // populate book details
         res.status(200).json(associations)
     }
     catch(error) {
@@ -123,42 +123,6 @@ const getUserHistory = async (req, res) => {
     }
 }
 
-// Start reading a book
-const startReadingBook = async (req, res) => {
-    try{
-        const associationId = req.params.associationId;
-        const { readerStatus, readerStarted } = req.body;
-
-        // Update the UserBook association with the new values
-        const updatedAssociation = await UserBook.findByIdAndUpdate(
-            associationId,
-            { readerStatus, readerStarted },
-            { new: true } // To get the updated association after the update
-        );
-        if (!updatedAssociation) {
-            return res.status(404).json({ error: "Association not found" });
-        }
-
-        // Update the book in the user's library here as well
-        const user = await User.findById(updatedAssociation.user);
-        const bookId = updatedAssociation.book;
-
-        // Find the book in the user's library and update its fields
-        const userLibraryBook = user.library.find((libraryBook) => libraryBook.book.equals(bookId));
-        if (userLibraryBook) {
-            userLibraryBook.readerStatus = readerStatus;
-            userLibraryBook.readerStarted = readerStarted;
-        }
-        await user.save();
-
-        res.status(200).json({ message: "Reader status and started date updated successfully", userLibraryBook })
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "An error occurred while marking the book as complete" })
-    }
-}
-
 
 module.exports = {
     createUserBookAssociation,
@@ -166,6 +130,5 @@ module.exports = {
     updateAssociation,
     getBookAssociationDetails,
     getUserHistory,
-    startReadingBook,
     getAllBooksForUser
 }

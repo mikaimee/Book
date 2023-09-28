@@ -74,9 +74,9 @@ const EditBook = () => {
         mutate: editBookMutate,
         isLoading: editBookIsLoading,
     } = useMutation({
-        mutationFn: ({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished }) => {
+        mutationFn: ({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage }) => {
             return editBook({
-                bookData: { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished },
+                bookData: { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage },
                 bookId: detailData._id
             })
         },
@@ -150,8 +150,7 @@ const EditBook = () => {
                 language: detailIsLoading ? "" : detailData.language,
                 ISBN: detailIsLoading ? "" : detailData.ISBN,
                 description: detailIsLoading ? "" : detailData.description,
-                genres: detailIsLoading ? [] : detailData.genres,
-                readerStatus: detailIsLoading? "" : detailData.readerStatus
+                genres: detailIsLoading ? [] : detailData.genres
             }
         }, [detailData, detailIsLoading]),
         mode: 'onChange'
@@ -202,24 +201,24 @@ const EditBook = () => {
     }
 
     const submitHandler = (data) => {
-        const { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted, readerFinished } = data
-        console.log('Data before update: ', data)
-        if (readerStatus === 'Yet to Start') {
-            data.readerStarted = null;
-            data.readerFinished = null
-            console.log('Updating readerFinished to:', data.readerFinished)
-            console.log('Updating readerStarted to:', data.readerStarted)
-        } 
-        else if (readerStatus === 'In Progress') {
-            data.readerStarted = new Date().toISOString();
-            console.log('Updating readerStarted to:', data.readerStarted)
-        }
+        const { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage } = data
+        // console.log('Data before update: ', data)
+        // if (readerStatus === 'Yet to Start') {
+        //     data.readerStarted = null;
+        //     data.readerFinished = null
+        //     console.log('Updating readerFinished to:', data.readerFinished)
+        //     console.log('Updating readerStarted to:', data.readerStarted)
+        // } 
+        // else if (readerStatus === 'In Progress') {
+        //     data.readerStarted = new Date().toISOString();
+        //     console.log('Updating readerStarted to:', data.readerStarted)
+        // }
         
-        if (readerStatus === 'Complete') {
-            data.readerFinished = new Date().toISOString()
-            console.log('Updating readerFinished to:', data.readerFinished)
-        }
-        console.log('Form data after update:', data)
+        // if (readerStatus === 'Complete') {
+        //     data.readerFinished = new Date().toISOString()
+        //     console.log('Updating readerFinished to:', data.readerFinished)
+        // }
+        // console.log('Form data after update:', data)
         // editBookMutate({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted: readerStarted, readerFinished: readerFinished, genres: selectedGenres })
         editBookMutate(data, {genres: selectedGenres})
     }
@@ -427,7 +426,7 @@ const EditBook = () => {
                                 <p>{errors.description?.message}</p>
                             )}
                         </div>
-                        {userAssociation && (
+                        {/* {userAssociation && (
                             <div>
                                 <label htmlFor='readerStatus'>Status: </label>
                                 <Controller
@@ -448,7 +447,7 @@ const EditBook = () => {
                                     <p>{errors.readerStatus?.message}</p>
                                 )}
                             </div>
-                        )}
+                        )} */}
                         <div>
                             <button type="submit" disabled={!isValid || editBookIsLoading}>
                                 Save
