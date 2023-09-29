@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
 import { getUserProfile } from '../../services/user'
+import ProfilePic from '../../components/user/ProfilePic'
 
 const Profile = () => {
 
@@ -39,6 +40,12 @@ const Profile = () => {
                     {isError && (
                         <div>Error: {error.message}</div>
                     )}
+                    <div>
+                        <ProfilePic 
+                            profilePicture={profileData?.profilePicture}
+                            isEditable={false}
+                        />
+                    </div>
                     {profileData && (
                         <div>
                             <p>First Name: {profileData?.firstName}</p>

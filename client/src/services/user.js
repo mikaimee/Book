@@ -50,3 +50,24 @@ export const deleteUser = async ({_id, token}) => {
         throw new Error(error.message);
     }
 }
+
+export const updateProfilePicture = async ({ token, file }) => {
+    try {
+        const formData = new FormData()
+        formData.append('profilePicture', file)
+
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+            },
+        };
+        const { data } = await axios.put("http://localhost:8000/users/uploadProfilePicture", formData, config);
+        return data;
+    } 
+    catch (error) {
+        if (error.response && error.response.data.message)
+            throw new Error(error.response.data.message);
+        throw new Error(error.message);
+    }
+}

@@ -11,4 +11,7 @@ router.route('/')
 router.route('/profile')
     .get(protection.authProtect, userController.oneUser)
 
+router.route('/uploadProfilePicture')
+    .put(protection.authProtect, userController.updateProfilePicture)
+
 module.exports = router

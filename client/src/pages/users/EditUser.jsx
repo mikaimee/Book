@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getUserProfile, updateProfile } from '../../services/user'
 import { userActions } from '../../store/userReducer'
 import toast from 'react-hot-toast'
+import ProfilePic from '../../components/user/ProfilePic'
 
 const EMAIL_VALID = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 const PASSWORD_VALID = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
@@ -85,6 +86,12 @@ const EditUser = () => {
             <section>
                 <div>
                     <h1>Edit Profile</h1>
+                    <div>
+                        <ProfilePic 
+                            profilePicture={profileData?.profilePicture}
+                            isEditable={true}
+                        />
+                    </div>
                     <form onSubmit={handleSubmit(submitHandler)}>
                         <div>
                             <label htmlFor="firstName">First Name</label>

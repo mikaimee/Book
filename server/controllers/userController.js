@@ -1,4 +1,6 @@
 const User = require("../models/User")
+const uploadPicture = require('../middleware/multer')
+const fileRemove = require('../util/fileRemover')
 
 const allUsers = async(req, res) => {
     const users = await User.find()
@@ -65,6 +67,64 @@ const updateUser = async(req, res) => {
     }
 }
 
+const updateProfilePicture = async (req, res) => {
+    try {
+        const upload = uploadPicture.upload.single('profilePicture') // key
+        upload(req, res, async function (err) {
+            if (err) {
+                console.error('An error occured while uploading', err.message)
+                return res.status(500).json({ message: 'File upload error' })
+            }
+
+            const userId = req.user._id
+            const updatedUser = await User.findById(userId)
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: 'User not found' })
+            }
+
+            const oldProfilePicture = updatedUser.profilePicture
+
+            if (req.file) {
+                const newProfilePicture = req.file.filename
+                updatedUser.profilePicture = newProfilePicture
+                await updatedUser.save()
+                console.log('Updated user:', updatedUser);
+                if (oldProfilePicture) {
+                    console.log('Removing file:', oldProfilePicture)
+                    fileRemove.fileRemover(oldProfilePicture)
+                }
+            }
+            else {
+                updatedUser.profilePicture = ''
+                await updatedUser.save()
+                console.log('Updated user:', updatedUser);
+                if (oldProfilePicture) {
+                    console.log('Removing file:', oldProfilePicture)
+                    fileRemove.fileRemover(oldProfilePicture)
+                }
+            }
+
+            const responseData = {
+                _id: updatedUser._id,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName,
+                email: updatedUser.email,
+                profilePicture: updatedUser.profilePicture,
+                isAdmin: updatedUser.isAdmin,
+                library: updatedUser.library,
+                token: await updatedUser.getSigninToken(),
+                message: `${updatedUser.firstName} updated`
+            }
+            res.json(responseData)
+        })
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
 const deleteUser = async (req, res) => {
     if (!req?.body?._id) {
         return res.status(400).json({messgae: 'User id is required'})
@@ -81,5 +141,6 @@ module.exports = {
     allUsers,
     oneUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    updateProfilePicture
 }
