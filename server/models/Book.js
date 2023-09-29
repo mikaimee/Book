@@ -43,7 +43,8 @@ const BookSchema = new Schema({
         unqiue: true
     },
     coverImage: {
-        type: String
+        type: String,
+        default: ''
     }
 }, {timestamps: true, toJSON: { virtuals: true }})
 

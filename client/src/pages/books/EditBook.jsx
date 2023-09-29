@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
+import CoverImage from '../../components/book/CoverImage'
 
 const EditBook = () => {
 
@@ -203,6 +204,13 @@ const EditBook = () => {
             <section>
                 <div>
                     <h1>Edit Book</h1>
+                    <div>
+                    <CoverImage
+                            bookId={detailData?._id}
+                            coverImage={detailData?.coverImage}
+                            isEditable={true}
+                        />
+                    </div>
                     <form onSubmit={handleSubmitBook(submitBookHandler)}>
                         <div>
                             <label htmlFor="title">Title</label>

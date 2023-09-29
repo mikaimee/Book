@@ -61,9 +61,9 @@ export const updateProfilePicture = async ({ token, file }) => {
                 'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ${token}`,
             },
-        };
+        }
         const { data } = await axios.put("http://localhost:8000/users/uploadProfilePicture", formData, config);
-        return data;
+        return data
     } 
     catch (error) {
         if (error.response && error.response.data.message)

@@ -1,31 +1,24 @@
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { useDispatch, useSelector } from 'react-redux'
-import { updateProfilePicture } from '../../services/user'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { userActions } from '../../store/userReducer'
+import { updateCoverImage } from '../../services/book'
 import stables from '../../constants/stable'
 import { HiOutlineCamera } from 'react-icons/hi'
-import Cropping from './Cropping'
 
-const ProfilePic = ({ profilePicture, isEditable  }) => {
+const CoverImage = ({ bookId, coverImage, isEditable }) => {
 
     const queryClient = useQueryClient()
-    const dispatch = useDispatch()
-    const userState = useSelector((state) => state.user)
-    const [openCrop, setOpenCrop] = useState(false)
     const [photo, setPhoto] = useState(null)
+    const [openCrop, setOpenCrop] = useState(false)
 
     const { mutate, isLoading } = useMutation({
-        mutationFn: ({ token, file }) => {
-            return updateProfilePicture({ token, file });
+        mutationFn:({ bookId, file }) => {
+            return updateCoverImage({ bookId, file })
         },
-        onSuccess: (data) => {
-            dispatch(userActions.setUserInfo(data));
+        onSuccess: () => {
             setOpenCrop(false);
-            localStorage.setItem('account', JSON.stringify(data));
-            queryClient.invalidateQueries(['profile']);
-            toast.success('Profile Photo is removed');
+            queryClient.invalidateQueries(['bookDetails']);
+            toast.success(' Cover Image is removed');
         },
         onError: (error) => {
             toast.error(error.message);
@@ -40,12 +33,12 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
     }
 
     const handleDeleteImage = () => {
-        if (window.confirm('Do you want to delete your profile picture')) {
+        if (window.confirm('Do you want to delete this cover image')) {
             try {
                 const formData = new FormData();
-                formData.append('profilePicture', '');
+                formData.append('coverImage', '');
 
-            mutate({ token: userState.userInfo.token, formData: formData });
+            mutate({ bookId: bookId, file: formData });
             } 
             catch (error) {
             toast.error(error.message);
@@ -57,13 +50,11 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
     return (
         <div>
             <div>
-                <label
-                    htmlFor='profilePicture'
-                >
-                    {profilePicture ? (
+                <label htmlFor='coverImage'>
+                    {coverImage ? (
                         <img
-                            src={stables.UPLOAD_FOLDER_BASE_URL + profilePicture}
-                            alt='profile'
+                            src={stables.UPLOAD_FOLDER_BASE_URL + coverImage}
+                            alt='book cover'
                         />
                     ) : (
                         <div>
@@ -91,4 +82,4 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
     )
 }
 
-export default ProfilePic
+export default CoverImage

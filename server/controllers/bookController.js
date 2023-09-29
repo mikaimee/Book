@@ -1,18 +1,8 @@
 const Book = require('../models/Book')
 const Review = require('../models/Review')
 const { v4: uuid } = require('uuid')
-const multer = require('multer')
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/'); // Specify the upload directory
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname); // Define file naming
-    },
-});
-
-const upload = multer({ storage: storage });
+const uploadPicture = require('../middleware/multer')
+const fileRemove = require('../util/fileRemover')
 
 const allBooks = async (req, res) => {
     try{
@@ -61,6 +51,63 @@ const updateBook = async (req, res) => {
     }
     catch (error) {
         res.status(500).json({ error: "An error occured while updating book" })
+    }
+}
+
+const updateCoverImage = async (req, res) => {
+    try{
+        const upload = uploadPicture.upload.single('coverImage') // key
+        upload(req, res, async function (err) {
+            if (err) {
+                console.error('An error occured while uploading', err.message)
+                return res.status(500).json({ message: 'File upload error' })
+            }
+
+            const bookId = req.params.bookId
+            const updatedBook = await Book.findById(bookId)
+            if (!updatedBook) {
+                return res.status(404).json({ message: 'Book not found' })
+            }
+
+            const oldCoverImage = updatedBook.coverImage
+
+            if (req.file) {
+                const newCoverImage = req.file.filename
+                updatedBook.coverImage = newCoverImage
+                await updatedBook.save()
+                console.log('Updated book:', updatedBook);
+                if (oldCoverImage) {
+                    console.log('Removing file:', oldCoverImage)
+                    fileRemove.fileRemover(oldCoverImage)
+                }
+            }
+            else {
+                updatedBook.coverImage = ''
+                await updatedBook.save()
+                console.log('Updated book:', updatedBook);
+                if (oldCoverImage) {
+                    console.log('Removing file:', oldCoverImage)
+                    fileRemove.fileRemover(oldCoverImage)
+                }
+            }
+
+            const responseData = {
+                _id: updatedBook._id,
+                author: updatedBook.author,
+                pages: updatedBook.pages,
+                ISBN: updatedBook.ISBN,
+                publishedDate: updatedBook.publishedDate,
+                description: updatedBook.description,
+                language: updatedBook.language,
+                coverImage: updatedBook.coverImage,
+                slug: updatedBook.slug
+            }
+            res.json(responseData)
+        })
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Internal server error' })
     }
 }
 
@@ -162,5 +209,5 @@ module.exports = {
     singleBook,
     searchBooks,
     filterBooks,
-    
+    updateCoverImage
 }

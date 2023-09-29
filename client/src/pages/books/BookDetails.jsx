@@ -9,6 +9,7 @@ import { createUserBookAssociation, getLibraryDetails, updateUserBook } from '..
 import ReviewContainer from '../../components/reviews/ReviewContainer'
 import toast from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
+import CoverImage from '../../components/book/CoverImage'
 
 const BookDetails = () => {
 
@@ -216,6 +217,13 @@ const BookDetails = () => {
                     >
                         Edit
                     </button>
+                    <div>
+                        <CoverImage
+                            bookId={detailData?._id}
+                            coverImage={detailData?.coverImage}
+                            isEditable={false}
+                        />
+                    </div>
                     <h2>{ detailData?.title }</h2>
                     <p>Author: { detailData?.author }</p>
                     <p>Pages: { detailData?.pages }</p>
