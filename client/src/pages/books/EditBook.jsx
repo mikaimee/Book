@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux'
 import { getBookDetails, editBook } from '../../services/book'
 import { getAllGenresForBook, createBookGenreAssociation, removeBookGenreAssociation } from '../../services/bookgenres'
 import { allGenres, createGenre } from '../../services/genre'
-import { getAllBooksForUser } from '../../services/userbooks'
+import { getLibraryDetails, updateUserBook } from '../../services/userbooks'
+import { getUserProfile } from '../../services/user'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -30,7 +31,7 @@ const EditBook = () => {
         ["bookDetails", bookId], // Provide 'bookId' as part of the query key
         () => getBookDetails(bookId)
     );
-    console.log('detailData:', detailData)
+    // console.log('detailData:', detailData)
 
     // GET ALL GENRES
     const {
@@ -112,25 +113,9 @@ const EditBook = () => {
         }
     })
 
-    // GET USER ASSOCIATION
-    const {
-        data: libraryData,
-        isLoading: libraryisLoading,
-        isError: libaryIsError,
-        error: libraryError
-    } = useQuery({
-        queryFn: () => {
-            return getAllBooksForUser({ token: userState?.userInfo?.token })
-        },
-        queryKey: ["library"]
-    })
-    // console.log('Library: ', libraryData)
-
-    // Find userAssociation based on bookId
-    const userAssociation = libraryData?.find(association => association.book._id === bookId)
-
     // USEFORM
-    const {register, handleSubmit, formState: { errors, isValid }, control, watch} = useForm({
+    // Book Model
+    const {register: registerBook, handleSubmit: handleSubmitBook, formState: { errors: errorsBook, isValid }} = useForm({
         defaultValues: {
             title: "",
             author: "",
@@ -200,26 +185,8 @@ const EditBook = () => {
         }
     }
 
-    const submitHandler = (data) => {
+    const submitBookHandler = (data) => {
         const { title, author, pages, publishedDate, description, language, ISBN, slug, coverImage } = data
-        // console.log('Data before update: ', data)
-        // if (readerStatus === 'Yet to Start') {
-        //     data.readerStarted = null;
-        //     data.readerFinished = null
-        //     console.log('Updating readerFinished to:', data.readerFinished)
-        //     console.log('Updating readerStarted to:', data.readerStarted)
-        // } 
-        // else if (readerStatus === 'In Progress') {
-        //     data.readerStarted = new Date().toISOString();
-        //     console.log('Updating readerStarted to:', data.readerStarted)
-        // }
-        
-        // if (readerStatus === 'Complete') {
-        //     data.readerFinished = new Date().toISOString()
-        //     console.log('Updating readerFinished to:', data.readerFinished)
-        // }
-        // console.log('Form data after update:', data)
-        // editBookMutate({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage, readerStatus, readerStarted: readerStarted, readerFinished: readerFinished, genres: selectedGenres })
         editBookMutate(data, {genres: selectedGenres})
     }
 
@@ -231,19 +198,18 @@ const EditBook = () => {
         return <p>Error loading book details</p>
     }
 
-
     return (
         <Layout>
             <section>
                 <div>
                     <h1>Edit Book</h1>
-                    <form onSubmit={handleSubmit(submitHandler)}>
+                    <form onSubmit={handleSubmitBook(submitBookHandler)}>
                         <div>
                             <label htmlFor="title">Title</label>
                             <input 
                                 type='text'
                                 id='title'
-                                {...register("title", {
+                                {...registerBook("title", {
                                     required: {
                                         value: true,
                                         message: "Title is required"
@@ -251,8 +217,8 @@ const EditBook = () => {
                                 })}
                                 placeholder='Enter title'
                             />
-                            {errors.title?.message && (
-                                <p>{errors.title?.message}</p>
+                            {errorsBook.title?.message && (
+                                <p>{errorsBook.title?.message}</p>
                             )}
                         </div>
                         <div>
@@ -260,7 +226,7 @@ const EditBook = () => {
                             <input 
                                 type='text'
                                 id='author'
-                                {...register("author", {
+                                {...registerBook("author", {
                                     required: {
                                         value: true,
                                         message: "Author is required"
@@ -268,8 +234,8 @@ const EditBook = () => {
                                 })}
                                 placeholder='Enter author'
                             />
-                            {errors.author?.message && (
-                                <p>{errors.author?.message}</p>
+                            {errorsBook.author?.message && (
+                                <p>{errorsBook.author?.message}</p>
                             )}
                         </div>
                         <div>
@@ -277,7 +243,7 @@ const EditBook = () => {
                             <input 
                                 type='number'
                                 id='pages'
-                                {...register("pages", {
+                                {...registerBook("pages", {
                                     required: {
                                         value: true,
                                         message: "Pages is required"
@@ -285,8 +251,8 @@ const EditBook = () => {
                                 })}
                                 placeholder='Enter pages'
                             />
-                            {errors.pages?.message && (
-                                <p>{errors.pages?.message}</p>
+                            {errorsBook.pages?.message && (
+                                <p>{errorsBook.pages?.message}</p>
                             )}
                         </div>
                         <div>
@@ -294,7 +260,7 @@ const EditBook = () => {
                             <input 
                                 type='text'
                                 id='publishedDate'
-                                {...register("publishedDate", {
+                                {...registerBook("publishedDate", {
                                     required: {
                                         value: true,
                                         message: "PublishedDate is required"
@@ -302,8 +268,8 @@ const EditBook = () => {
                                 })}
                                 placeholder='Enter publishedDate'
                             />
-                            {errors.publishedDate?.message && (
-                                <p>{errors.publishedDate?.message}</p>
+                            {errorsBook.publishedDate?.message && (
+                                <p>{errorsBook.publishedDate?.message}</p>
                             )}
                         </div>
                         <div>
@@ -311,7 +277,7 @@ const EditBook = () => {
                             <input 
                                 type='text'
                                 id='language'
-                                {...register("language", {
+                                {...registerBook("language", {
                                     required: {
                                         value: true,
                                         message: "Language is required"
@@ -319,8 +285,8 @@ const EditBook = () => {
                                 })}
                                 placeholder='Enter language'
                             />
-                            {errors.language?.message && (
-                                <p>{errors.language?.message}</p>
+                            {errorsBook.language?.message && (
+                                <p>{errorsBook.language?.message}</p>
                             )}
                         </div>
                         <div>
@@ -328,7 +294,7 @@ const EditBook = () => {
                             <input 
                                 type='text'
                                 id='ISBN'
-                                {...register("ISBN", {
+                                {...registerBook("ISBN", {
                                     required: {
                                         value: true,
                                         message: "ISBN is required"
@@ -336,8 +302,8 @@ const EditBook = () => {
                                 })}
                                 placeholder='Enter ISBN'
                             />
-                            {errors.ISBN?.message && (
-                                <p>{errors.ISBN?.message}</p>
+                            {errorsBook.ISBN?.message && (
+                                <p>{errorsBook.ISBN?.message}</p>
                             )}
                         </div>
                         <div>
@@ -392,7 +358,7 @@ const EditBook = () => {
                                     <input
                                         type='text'
                                         name='newGenreName'
-                                        {...register('newGenreName')}
+                                        {...registerBook('newGenreName')}
                                         value={newGenreName}
                                         onChange={(e) => setNewGenreName(e.target.value)}
                                     />
@@ -414,7 +380,7 @@ const EditBook = () => {
                             <label htmlFor="description">Description</label>
                             <textarea
                                 id='description'
-                                {...register("description", {
+                                {...registerBook("description", {
                                     required: {
                                         value: true,
                                         message: "Description is required"
@@ -422,8 +388,8 @@ const EditBook = () => {
                                 })}
                                 placeholder='Enter description'
                             />
-                            {errors.description?.message && (
-                                <p>{errors.description?.message}</p>
+                            {errorsBook.description?.message && (
+                                <p>{errorsBook.description?.message}</p>
                             )}
                         </div>
                         {/* {userAssociation && (

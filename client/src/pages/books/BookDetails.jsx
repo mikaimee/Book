@@ -5,10 +5,11 @@ import { useSelector } from 'react-redux'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getBookDetails } from '../../services/book'
 import { getAllGenresForBook } from '../../services/bookgenres'
-import { getAllBooksForUser, createUserBookAssociation, getLibraryDetails } from '../../services/userbooks'
+import { createUserBookAssociation, getLibraryDetails, updateUserBook } from '../../services/userbooks'
 import { getUserProfile } from '../../services/user'
 import ReviewContainer from '../../components/reviews/ReviewContainer'
 import toast from 'react-hot-toast'
+import { useForm, Controller } from 'react-hook-form'
 
 const BookDetails = () => {
 
@@ -28,7 +29,7 @@ const BookDetails = () => {
         ["bookDetails", bookId], // Provide 'bookId' as part of the query key
         () => getBookDetails(bookId)
     );
-    console.log('detailData:', detailData)
+    // console.log('detailData:', detailData)
 
     // GENRE
     const {
@@ -51,12 +52,11 @@ const BookDetails = () => {
         },
         queryKey: ["profile"]
     })
-    console.log('profileData:', profileData)
+    // console.log('profileData:', profileData)
 
     const matchingLibraryEntry = profileData?.library.find(
-        (libraryEntry) => libraryEntry.book === bookId
+        (libraryEntry) => libraryEntry?.book === bookId
     )
-
     const {
         data: libraryData,
         isLoading: libraryIsLoading,
@@ -64,11 +64,11 @@ const BookDetails = () => {
         error: libraryError
     } = useQuery({
         queryFn: () => {
-            return getLibraryDetails({ token: userState?.userInfo?.token, associationId: matchingLibraryEntry._id })
+            return getLibraryDetails({ token: userState?.userInfo?.token, associationId: matchingLibraryEntry?._id })
         },
         queryKey: ["library"]
     })
-    console.log("Library Data: ", libraryData)
+    // console.log("Library Data: ", libraryData)
 
     const userAssociation = libraryData
     const renderAddLibraryButton = !userAssociation && userState?.userInfo?.token
@@ -95,6 +95,101 @@ const BookDetails = () => {
 
     const handleAddLibrary = () =>{
         userBookMutate({ bookId })
+    }
+
+    // UPDAT USER/BOOK ASSOCIATION (AKA: READER STATUS)
+    const {
+        mutate: editUserBookMutate,
+        isLoading: editUserBookIsLoading,
+    } = useMutation({
+        mutationFn: ({ readerStatus, readerStarted, readerFinished }) => {
+            return updateUserBook({
+                token: userState?.userInfo?.token,
+                associationData: { readerStatus, readerStarted, readerFinished },
+                associationId: matchingLibraryEntry?._id
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['library'])
+            toast.success("Successful update of reader status")
+        },
+        onError: (error) => {
+            toast.error(error.message)
+            console.error(error)
+        }
+    })
+
+    const { handleSubmit, register, formState: { errors, isValid }, control, setValue, watch} = useForm({
+        defaultValues: {
+            readerStatus: 'Yet to Start'
+        },
+        mode: 'onChange'
+    })
+    useEffect(() => {
+        if (!libraryIsLoading && libraryData?.association?.readerStatus) {
+            setValue('readerStatus', libraryData?.association?.readerStatus)
+        }
+    }, [libraryData, libraryIsLoading, setValue])
+
+    // UPDATE START/FINISH DATES
+    // const readerStatus = watch('readerStatus')
+    // const [readerStarted, setReaderStarted] = useState(null)
+    // const [readerFinished, setReaderFinished] = useState(null)
+    // // update 'readerStartDate' based on readerStatus
+    // useEffect(() => {
+    //     if (readerStatus === 'In Progress') {
+    //         // Set 'readerStarted' to the current date when 'In Progress' is selected
+    //         setReaderStarted(new Date())
+    //     } 
+    //     else if (readerStatus === 'Yet to Start') {
+    //         // Reset 'readerStarted' to null when 'Yet to Start' is selected
+    //         setReaderStarted(null)
+    //     }
+    //     console.log('readerStarted:', readerStarted)
+    //     }, [readerStatus]
+    // )
+    // // update 'readerStartDate' based on readerStatus
+    // useEffect(() => {
+    //     if (readerStatus === 'Complete') {
+    //         // Set 'readerStarted' to the current date when 'In Progress' is selected
+    //         setReaderFinished(new Date())
+    //     } 
+    //     else {
+    //         // Reset 'readerFinished' to null 
+    //         setReaderFinished(null)
+    //     }
+    //     console.log('readerFinshed:', readerFinished)
+    //     }, [readerStatus]
+    // )
+
+    // Handle drop-down menu
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+    const toggleDropdown = () => {
+        setIsDropdownVisible(!isDropdownVisible);
+    }
+    const cancelEdit = () => {
+        setIsDropdownVisible(false)
+    }
+
+    // submit Handler 
+    const submitHandler = (data) => {
+        const {readerStatus, readerStarted, readerFinished} = data
+        let updatedReaderStarted = null
+        let updatedReaderFinished = null
+        if (readerStatus === 'In Progress') {
+            updatedReaderStarted = new Date().toISOString()
+        }
+        else if (readerStatus === 'Complete') {
+            updatedReaderFinished = new Date().toISOString()
+        }
+        const updatedData = {
+            ...data,
+            readerStarted: updatedReaderStarted,
+            readerFinished: updatedReaderFinished,
+        }
+        editUserBookMutate (updatedData)
+        queryClient.invalidateQueries(['library'])
+        setIsDropdownVisible(false)
     }
 
     const formatDate = (dateString) => {
@@ -146,7 +241,39 @@ const BookDetails = () => {
                 </div>
                 {userAssociation && (
                     <div>
-                        <p>Reader Status: {libraryData?.association?.readerStatus}</p>
+                        {!isDropdownVisible ? (
+                            <div>
+                                <p>Status: {libraryData?.association?.readerStatus}</p>
+                                <button onClick={toggleDropdown}>Update Status</button>
+                            </div>
+                        ) : (
+                            <button onClick={cancelEdit}>Cancel</button>
+                        )}
+                        {isDropdownVisible && (
+                            <form onSubmit={handleSubmit(submitHandler)}>
+                                <div>
+                                    <label htmlFor='readerStatus'>Status:</label>
+                                    <Controller
+                                        name='readerStatus'
+                                        control={control}
+                                        defaultValue={libraryData?.association?.readerStatus}
+                                        render={({ field }) => (
+                                            <div>
+                                                <select {...field}>
+                                                    <option value='Yet to Start'>Yet to Start</option>
+                                                    <option value='In Progress'>In Progress</option>
+                                                    <option value='Complete'>Complete</option>
+                                                </select>
+                                            </div>
+                                        )}
+                                    />
+                                    {errors.readerStatus?.message && (
+                                        <p>{errors.readerStatus?.message}</p>
+                                    )}
+                                    <button type='submit'>Update Status</button>
+                                </div>
+                            </form>
+                        )}
                         <p>Start Date: {formatDate(libraryData?.association?.readerStarted)}</p>
                         <p>Finish Date: {formatDate(libraryData?.association?.readerFinished)}</p>
                     </div>

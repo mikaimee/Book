@@ -51,3 +51,20 @@ export const getLibraryDetails = async ({ token, associationId }) => {
         throw new Error (err.message)
     }
 }
+
+export const updateUserBook = async ({ token, associationId, associationData }) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${ token }`,
+            },
+        }
+        const { data }= await axios.patch(`http://localhost:8000/userBooks/${associationId}`, associationData, config)
+        return data
+    }  
+    catch(err) {
+        if (err.response && err.response.data.message) 
+            throw new Error(err.response.data.message)
+        throw new Error (err.message)
+    }
+}
