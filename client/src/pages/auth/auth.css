@@ -1,0 +1,99 @@
+.auth-form-section {
+    background-color:#fff;
+    padding: px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin: 0 auto;
+    width: 75%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+.auth-form-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.auth-form-section form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.auth-form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.auth-form-group input[type='password'],
+input[type='email'],
+input[type='text'] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    width: 100%;
+}
+
+.auth-form-group input[type='email']::placeholder {
+    color: #999;
+}
+
+.auth-form-group input[type='password']::placeholder {
+    color: #999;
+}
+
+.auth-form-group p {
+    color: red;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.auth-link-account {
+    display: block; 
+    text-align: center;
+    margin-top: 10px;
+    color: #333;
+    text-decoration: none;
+}
+
+.auth-link-account a{
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.auth-link-account a:hover {
+    color: #ff9900;
+}
+
+.auth-submit-button {
+    display: block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ff9900;
+    color:  #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.auth-submit-button:hover {
+    background-color: #ff6600;
+}
+
+.auth-submit-button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

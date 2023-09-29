@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMutation } from '@tanstack/react-query'
+import './auth.css'
 
 const EMAIL_VALID = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 const PASSWORD_VALID = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
@@ -58,11 +59,11 @@ const Register = () => {
 
     return (
         <Layout>
-            <section>
+            <section className='auth-form-section'>
                 <div>
-                    <h1>Register</h1>
+                    <h2>Register</h2>
                     <form onSubmit={handleSubmit(submitHandler)}>
-                        <div>
+                        <div className='auth-form-group'>
                             <label htmlFor="firstName">First Name</label>
                             <input
                                 type='text'
@@ -79,7 +80,7 @@ const Register = () => {
                                 <p>{errors.firstName?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='auth-form-group'>
                             <label htmlFor="lastName">Last Name</label>
                             <input
                                 type='text'
@@ -96,7 +97,7 @@ const Register = () => {
                                 <p>{errors.lastName?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='auth-form-group'>
                             <label htmlFor="email">Email</label>
                             <input
                                 type='email'
@@ -117,7 +118,7 @@ const Register = () => {
                                 <p>{errors.email?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='auth-form-group'>
                             <label htmlFor="password">Password</label>
                             <input
                                 type='password'
@@ -138,7 +139,7 @@ const Register = () => {
                                 <p>{errors.password?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='auth-form-group'>
                             <label htmlFor="confirmPassword">Confirm Password</label>
                             <input
                                 type='password'
@@ -160,12 +161,15 @@ const Register = () => {
                                 <p>{errors.confirmPassword?.message}</p>
                             )}
                         </div>
-                        <Link to="/login">
-                            <p>Already have an account?</p>
-                        </Link>
+                        <div className='auth-link-account'>
+                            <p>
+                                Already have an account? <Link to="/login">Sign in</Link>
+                            </p>
+                        </div>
                         <button
                             type='submit'
                             disabled={!isValid || isLoading}
+                            className='auth-submit-button'
                         >
                             Register
                         </button>

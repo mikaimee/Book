@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
@@ -7,6 +7,7 @@ import { signin } from '../../services/auth'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { userActions} from '../../store/userReducer'
+import './auth.css'
 
 const EMAIL_VALID = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 const PASSWORD_VALID = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
@@ -53,11 +54,11 @@ const Login = () => {
 
     return (
         <Layout>
-            <section>
+            <section className='auth-form-section'>
                 <div>
                     <form onSubmit={handleSubmit(submitHandler)}>
                         <h2>Login</h2>
-                        <div>
+                        <div className='auth-form-group'>
                             <label htmlFor='email'>Email</label>
                             <input 
                                 type='email'
@@ -68,7 +69,7 @@ const Login = () => {
                                         message: "Email is required"
                                     },
                                     pattern: {
-                                        vallue: EMAIL_VALID,
+                                        value: EMAIL_VALID,
                                         message: "Your email must be in the correct format"
                                     }
                                 })}
@@ -78,7 +79,7 @@ const Login = () => {
                                 <p>{errors.email?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='auth-form-group'>
                             <label htmlFor='password'>Password</label>
                             <input 
                                 type='password'
@@ -95,12 +96,15 @@ const Login = () => {
                                 <p>{errors.password?.message}</p>
                             )}
                         </div>
-                        <Link to="/register">
-                            <p>Need an account?</p>
-                        </Link>
+                        <div className='auth-link-account'>
+                            <p>
+                                Need an account? <Link to="/register">Sign up</Link>
+                            </p>
+                        </div>
                         <button 
                             type='submit'
                             disabled={!isValid || isLoading}
+                            className='auth-submit-button'
                         >
                             Login
                         </button> 

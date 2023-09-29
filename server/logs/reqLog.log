@@ -7297,3 +7297,6 @@
 20230928	21:05:47	31559f14-e20b-4563-b1cb-36a292c37299	GET	/genres	http://localhost:3000
 20230928	21:05:50	bd2ede55-a1e4-4ecf-a525-c8997179de46	GET	/genres	http://localhost:3000
 20230928	21:06:14	6b5b5fb0-8584-43b9-831d-77da3dec75b2	GET	/genres	http://localhost:3000
+20230928	21:06:59	839c7e25-8838-47ba-b894-21496d202382	GET	/genres	http://localhost:3000
+20230928	21:09:12	23f2266f-1d49-47ab-b519-88116d11aa89	GET	/genres	http://localhost:3000
+20230928	21:09:12	4266f93a-47bc-4b42-bfc6-87bb61da526c	GET	/bookGenres/genre/65039d25b6950d45bbfb464b	http://localhost:3000
