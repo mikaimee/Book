@@ -25,15 +25,19 @@ const registration = async (req, res) => {
                 password
             })
 
+            const userWithLibrary = await User.findById(newUser._id)
+                .populate('library')
+                .exec()
+
             return res.status(201).json({
-                _id: newUser._id,
-                firstName: newUser.firstName,
-                lastName: newUser.lastName,
-                password: newUser.password,
-                email: newUser.email,
-                profilePicture: newUser.profilePicture,
-                isAdmin: newUser.isAdmin,
-                library: newUser.library,
+                _id: userWithLibrary._id,
+                firstName: userWithLibrary.firstName,
+                lastName: userWithLibrary.lastName,
+                password: userWithLibrary.password,
+                email: userWithLibrary.email,
+                profilePicture: userWithLibrary.profilePicture,
+                isAdmin: userWithLibrary.isAdmin,
+                library: userWithLibrary.library,
                 token: await newUser.getSigninToken(),
                 message: `New user ${firstName} created` 
             })
@@ -51,7 +55,11 @@ const login = async (req, res) => {
     }
 
     try {
-        const user = await User.findOne({email: email}).exec()
+        const user = await User.findOne({email: email})
+            .populate({
+                path: 'library'
+            })
+            .exec()
         if (!user) {
             res.status(404).json({message: "Invalid credentials"})
         }

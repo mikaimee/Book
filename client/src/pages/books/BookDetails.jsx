@@ -6,7 +6,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getBookDetails } from '../../services/book'
 import { getAllGenresForBook } from '../../services/bookgenres'
 import { createUserBookAssociation, getLibraryDetails, updateUserBook } from '../../services/userbooks'
-import { getUserProfile } from '../../services/user'
 import ReviewContainer from '../../components/reviews/ReviewContainer'
 import toast from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
@@ -43,20 +42,15 @@ const BookDetails = () => {
     )
     // console.log('genreData:', genreData)
 
-    // USER INFORMATION TO OBTAIN ASSOCIATION ID
-    const {
-        data: profileData
-    } = useQuery({
-        queryFn: () => {
-            return getUserProfile({ token: userState?.userInfo?.token })
-        },
-        queryKey: ["profile"]
-    })
-    // console.log('profileData:', profileData)
+    // USER INFORMATION TO OBTAIN ASSOCIATION ID//
 
-    const matchingLibraryEntry = profileData?.library.find(
+    const { userInfo } = userState
+    const { library } = userInfo
+
+    const matchingLibraryEntry = library.find(
         (libraryEntry) => libraryEntry?.book === bookId
     )
+
     const {
         data: libraryData,
         isLoading: libraryIsLoading,
@@ -64,11 +58,11 @@ const BookDetails = () => {
         error: libraryError
     } = useQuery({
         queryFn: () => {
-            return getLibraryDetails({ token: userState?.userInfo?.token, associationId: matchingLibraryEntry?._id })
+            return getLibraryDetails({ token: userInfo?.token, associationId: matchingLibraryEntry?._id })
         },
-        queryKey: ["library"]
+        queryKey: ["library", userInfo?.token, matchingLibraryEntry._id]
     })
-    // console.log("Library Data: ", libraryData)
+    console.log("Library Data: ", libraryData)
 
     const userAssociation = libraryData
     const renderAddLibraryButton = !userAssociation && userState?.userInfo?.token
