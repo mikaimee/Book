@@ -28,11 +28,19 @@ const HomePage = () => {
 
     return (
         <Layout> 
-            <div>
-                <SearchBar />
-                <LatestBooks />
-                <PopularBooks />
-                <BooksByGenre genreName="fantasy" />
+            <div className='home-content'>
+                <div className='search-bar'>
+                    <SearchBar />
+                </div>
+                <div className='home-section'>
+                    <LatestBooks />
+                </div>
+                <div className='home-section'>
+                    <PopularBooks />
+                </div>
+                <div className='home-section'>
+                    <BooksByGenre genreName="fantasy" />
+                </div>
             </div>
         </Layout>
     )

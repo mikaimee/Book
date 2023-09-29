@@ -1,0 +1,141 @@
+.add-book-section {
+    background-color:#fff;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin: 0 auto;
+    width: 75%;
+    max-width: 600px;
+}
+
+.add-book-section h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.add-book-section form {
+    display: flex;
+    flex-direction: column;
+}
+
+.aB-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.aB-form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.aB-form-group input[type='text'],
+.aB-form-group input[type='number'],
+.aB-form-group textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.form-group input[type='number'] {
+    width: 100%;
+}
+
+.aB-form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.aB-form-group p {
+    color: red;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.aB-genre-selection-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+.ab-genre-selection-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.aB-genre-selection-container label {
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.aB-genre-selection-container input[type='checkbox'] {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.aB-create-genre-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.aB-create-genre-container label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.aB-create-genre-container input[type='text'] {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.aB-create-genre-container button {
+    padding: 5px 10px;
+    background-color: #ff9900;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px; 
+}
+
+.aB-create-genre-container button:last-child {
+    margin-right: 0;
+}
+
+.aB-create-genre-container button.add-genre-button {
+    margin: 0 auto;
+    display: block;
+}
+
+.aB-create-genre-container button:hover {
+    background-color: #ff6600;
+}
+.ab-add-book-button {
+    padding: 10px 20px;
+    background-color: #ff9900;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.ab-add-book-button {
+    background-color: #ff6600 ;
+}
+
+.aB-add-book-button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import './css/createBook.css'
 
 const CreateBook = () => {
 
@@ -107,11 +108,11 @@ const CreateBook = () => {
 
     return (
         <Layout>
-            <section>
+            <section className='add-book-section'>
                 <div>
                     <h1>Add Book</h1>
                     <form onSubmit={handleSubmit(submitHandler)}>
-                        <div>
+                        <div className='aB-form-group'>
                             <label htmlFor="title">Title</label>
                             <input 
                                 type='text'
@@ -128,7 +129,7 @@ const CreateBook = () => {
                                 <p>{errors.title?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='aB-form-group'>
                             <label htmlFor="author">Author</label>
                             <input 
                                 type='text'
@@ -145,7 +146,7 @@ const CreateBook = () => {
                                 <p>{errors.author?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='aB-form-group'>
                             <label htmlFor="pages">Pages</label>
                             <input 
                                 type='number'
@@ -162,24 +163,24 @@ const CreateBook = () => {
                                 <p>{errors.pages?.message}</p>
                             )}
                         </div>
-                        <div>
-                            <label htmlFor="publishedDate">PublishedDate</label>
+                        <div className='aB-form-group'>
+                            <label htmlFor="publishedDate">Published Year</label>
                             <input 
                                 type='text'
                                 id='publishedDate'
                                 {...register("publishedDate", {
                                     required: {
                                         value: true,
-                                        message: "PublishedDate is required"
+                                        message: "Published Year is required"
                                     }
                                 })}
-                                placeholder='Enter publishedDate'
+                                placeholder='Enter Published Year'
                             />
                             {errors.publishedDate?.message && (
                                 <p>{errors.publishedDate?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='aB-form-group'>
                             <label htmlFor="language">Language</label>
                             <input 
                                 type='text'
@@ -196,7 +197,7 @@ const CreateBook = () => {
                                 <p>{errors.language?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='aB-form-group'>
                             <label htmlFor="ISBN">ISBN</label>
                             <input 
                                 type='text'
@@ -213,62 +214,72 @@ const CreateBook = () => {
                                 <p>{errors.ISBN?.message}</p>
                             )}
                         </div>
-                        <div>
-                            <label>Select Genres:</label>
-                            {/* Check if genresData exists before mapping */}
-                            {genresData ? (
-                                genresData.map((genre) => (
-                                    <div key={genre._id}>
-                                        <input
-                                            type="checkbox"
-                                            id={genre._id}
-                                            name="genres"
-                                            value={genre._id}
-                                            onChange={(e) => handleGenreChange(e, genre)}
-                                            checked={selectedGenres.some(
-                                            (selectedGenre) => selectedGenre._id === genre._id
-                                            )}
-                                        />
-                                        <label htmlFor={genre._id}>{genre.name}</label>
-                                    </div>
-                                ))
-                            ) : (
-                                <div>Loading genres...</div>
-                            )}
-                        </div>
+                        <div className='aB-genre-selection-container'>
+                            <div>
+                                <label className='ab-genre-selection-label'>Select Genres:</label>
+                                {/* Check if genresData exists before mapping */}
+                                {genresData ? (
+                                    genresData.map((genre) => (
+                                        <div key={genre._id}>
+                                            <input
+                                                type="checkbox"
+                                                id={genre._id}
+                                                name="genres"
+                                                value={genre._id}
+                                                onChange={(e) => handleGenreChange(e, genre)}
+                                                checked={selectedGenres.some(
+                                                (selectedGenre) => selectedGenre._id === genre._id
+                                                )}
+                                            />
+                                            <label htmlFor={genre._id}>{genre.name}</label>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div>Loading genres...</div>
+                                )}
+                            </div>
                         {/* Create Genre */}
-                        <div>
-                            <button
-                                type='button'
-                                onClick={() => setIsAddingGenre(!isAddingGenre)}
-                            >
-                                {isAddingGenre ? "Cancel" : "+"}
-                            </button>
-                            {isAddingGenre && (
-                                <div>
-                                    <label>Create New Genre: </label>
-                                    <input 
-                                        type='text'
-                                        name='newGenre'
-                                        {...register('newGenreName')}
-                                        value={newGenreName}
-                                        onChange={(e) => setNewGenreName(e.target.value)}  // update state of input field
-                                    />
+                            <div className='aB-create-genre-container'>
+                                {isAddingGenre ? (
+                                    <div>
+                                        <label>Create New Genre: </label>
+                                        <input 
+                                            type='text'
+                                            name='newGenre'
+                                            {...register('newGenreName')}
+                                            value={newGenreName}
+                                            onChange={(e) => setNewGenreName(e.target.value)}  // update state of input field
+                                        />
+                                        <button
+                                            type='button'
+                                            onClick={() => {
+                                                const name = newGenreName.trim() // Remove leading/trailig spaces
+                                                if(name) {
+                                                    mutateCreateGenre({ name })
+                                                }
+                                            }}
+                                        >
+                                            Create Genre
+                                        </button>
+                                        <button
+                                            type='button'
+                                            onClick={() => setIsAddingGenre(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                ) : (
                                     <button
-                                        type='button'
-                                        onClick={() => {
-                                            const name = newGenreName.trim() // Remove leading/trailig spaces
-                                            if(name) {
-                                                mutateCreateGenre({ name })
-                                            }
-                                        }}
-                                    >
-                                        Create Genre
-                                    </button>
-                                </div>
-                            )}
+                                    type='button'
+                                    onClick={() => setIsAddingGenre(true)}
+                                    className="add-genre-button"
+                                >
+                                    Add Genre
+                                </button>
+                                )}
+                            </div>
                         </div>
-                        <div>
+                        <div className='aB-form-group'>
                             <label htmlFor="description">Description</label>
                             <textarea
                                 id='description'
@@ -287,6 +298,7 @@ const CreateBook = () => {
                         <button
                             type='submit'
                             disabled={!isValid}
+                            className="aB-add-book-button"
                         >
                             Add Book
                         </button>

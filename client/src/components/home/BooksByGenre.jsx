@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getAllBooksforGenre } from '../../services/bookgenres'
 import { allGenres } from '../../services/genre'
@@ -43,6 +43,14 @@ const BooksByGenre = ({ genreName }) => {
     )
     console.log('booksForGenreData: ', genreBooksData)
 
+    // CSS
+    const containerRef = useRef(null)
+    const scrollLeft = () => {
+        if (containerRef.current) {
+            containerRef.current.scrollLeft -= 200
+        }
+    }
+
     if (!genreId) {
         return <div>Genre not found.</div>
     }
@@ -56,14 +64,17 @@ const BooksByGenre = ({ genreName }) => {
     }
 
     return (
-        <div>
-            <h2>{genreName}</h2>
-            {genreBooksData.map(book => (
-                <div key={book?.book?._id}>
-                    <h3>{book?.book?.title}</h3>
-                    <p>{book?.book?.author}</p>
-                </div>
-            ))}
+        <div className='books-by-genre'>
+            <h2 className='bBG-genre-title'>{genreName}</h2>
+            <div className='bbG-book-item-container' ref={containerRef}>
+                {genreBooksData.map(book => (
+                    <div key={book?.book?._id} className='bBG-book-iten'>
+                        <h3 className='bBG-book-title'>{book?.book?.title}</h3>
+                        <p className='bBG-book-author'>{book?.book?.author}</p>
+                    </div>
+                ))}
+            </div>
+            <div className='bBg-scroll-button' onClick={scrollLeft}>&lt;</div>
         </div>
     )
 }
