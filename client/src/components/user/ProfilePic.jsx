@@ -7,6 +7,7 @@ import { userActions } from '../../store/userReducer'
 import stables from '../../constants/stable'
 import { HiOutlineCamera } from 'react-icons/hi'
 import Cropping from './Cropping'
+import './profilePic.css'
 
 const ProfilePic = ({ profilePicture, isEditable  }) => {
 
@@ -55,8 +56,8 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
     }
 
     return (
-        <div>
-            <div>
+        <div className="profile-picture-container">
+            <div className="picture-container"> 
                 <label
                     htmlFor='profilePicture'
                 >
@@ -64,9 +65,10 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
                         <img
                             src={stables.UPLOAD_FOLDER_BASE_URL + profilePicture}
                             alt='profile'
+                            className="profile-picture-image"
                         />
                     ) : (
-                        <div>
+                        <div className="profile-picture-none">
                             <HiOutlineCamera />
                         </div>
                     )}
@@ -76,6 +78,7 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
                         type='file'
                         id='profilePicture'
                         onChange={handleFileChange}
+                        className='profile-picture-input'
                     />
                 )}
             </div>
@@ -83,6 +86,7 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
                 <button
                     onClick={handleDeleteImage}
                     type='button'
+                    className="profile-picture-button"
                 >
                     Delete
                 </button>

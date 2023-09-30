@@ -15,10 +15,10 @@ const CoverImage = ({ bookId, coverImage, isEditable }) => {
         mutationFn:({ bookId, file }) => {
             return updateCoverImage({ bookId, file })
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             setOpenCrop(false);
-            queryClient.invalidateQueries(['bookDetails']);
-            toast.success(' Cover Image is removed');
+            queryClient.invalidateQueries(['bookDetails'])
+            toast.success(' Cover Image is removed')
         },
         onError: (error) => {
             toast.error(error.message);
@@ -28,7 +28,8 @@ const CoverImage = ({ bookId, coverImage, isEditable }) => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setPhoto({ url: URL.createObjectURL(file), file });
+        setPhoto({ url: URL.createObjectURL(file), file })
+        mutate({ bookId: bookId, file: file})
         setOpenCrop(true);
     }
 
@@ -48,16 +49,17 @@ const CoverImage = ({ bookId, coverImage, isEditable }) => {
     }
 
     return (
-        <div>
-            <div>
+        <div className='cover-image-container'>
+            <div className='cover-image'>
                 <label htmlFor='coverImage'>
                     {coverImage ? (
                         <img
                             src={stables.UPLOAD_FOLDER_BASE_URL + coverImage}
                             alt='book cover'
+                            className='book-cover-image'
                         />
                     ) : (
-                        <div>
+                        <div className='no-cover-image'>
                             <HiOutlineCamera />
                         </div>
                     )}

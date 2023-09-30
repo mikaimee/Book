@@ -18,6 +18,7 @@ const CreateBook = () => {
     const [isAddingGenre, setIsAddingGenre] = useState(false)
     const [newGenreName, setNewGenreName] = useState('')
 
+
     const {
         data: genresData,
         isLoading: isLoadingGenres,

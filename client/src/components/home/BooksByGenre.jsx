@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getAllBooksforGenre } from '../../services/bookgenres'
 import { allGenres } from '../../services/genre'
+import CoverImage from '../book/CoverImage'
 
 const BooksByGenre = ({ genreName }) => {
 
@@ -69,6 +70,13 @@ const BooksByGenre = ({ genreName }) => {
             <div className='bbG-book-item-container' ref={containerRef}>
                 {genreBooksData.map(book => (
                     <div key={book?.book?._id} className='bBG-book-iten'>
+                        <div>
+                            <CoverImage 
+                                bookId={book?.book?._id}
+                                coverImage={book?.book?.coverImage}
+                                isEditable={false}
+                            />
+                        </div>
                         <h3 className='bBG-book-title'>{book?.book?.title}</h3>
                         <p className='bBG-book-author'>{book?.book?.author}</p>
                     </div>

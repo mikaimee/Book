@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
 import { getUserProfile } from '../../services/user'
 import ProfilePic from '../../components/user/ProfilePic'
+import './user.css'
 
 const Profile = () => {
 
@@ -33,14 +34,14 @@ const Profile = () => {
 
     return (
         <Layout>
-            <section>
+            <section className='profile-section'>
                 <div>
                     <h1>Profile</h1>
                     {isLoading && <div>Loading...</div>}
                     {isError && (
                         <div>Error: {error.message}</div>
                     )}
-                    <div>
+                    <div className='profile-component'>
                         <ProfilePic 
                             profilePicture={profileData?.profilePicture}
                             isEditable={false}
@@ -56,20 +57,8 @@ const Profile = () => {
                 </div>
                 <div>
                     <Link to="/user/edit">
-                        <button>Edit</button>
+                        <button className='p-edit-button'>Edit</button>
                     </Link>
-                    {/* <button
-                        disabled={isLoadingDeleteUser}
-                        type='button'
-                        onClick={() => {
-                            deleteHandler({
-                                _id: profileData._id,
-                                token: userState.userInfo.token
-                            })
-                        }}
-                    >
-                        Delete
-                    </button> */}
                 </div>
             </section>
         </Layout>
