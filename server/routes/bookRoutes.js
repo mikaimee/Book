@@ -15,6 +15,12 @@ router.route('/:bookId')
 router.route('/:bookId/uploadCoverImage')
     .put(bookController.updateCoverImage)
 
+router.route('/:bookId/averageRating')
+    .get(bookController.calculateAverageRating)
+
+router.route('/:bookId/numberOfRatings')
+    .get(bookController.calculateNumberofRatings)
+
 router.get('/search', bookController.searchBooks)  // Needs work
 router.get('/filter', bookController.filterBooks)  // Needs work
 

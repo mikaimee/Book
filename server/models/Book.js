@@ -55,4 +55,10 @@ BookSchema.virtual("reviews", {
     foreignField: "book"  // 'Book' model's '_id' will be compared with 'book' field in 'Review' model to retrieve related reviews
 })
 
+BookSchema.virtual("ratings", {
+    ref: "Rating",
+    localField: "_id",
+    foreignField: "book"
+})
+
 module.exports = mongoose.model('Book', BookSchema)

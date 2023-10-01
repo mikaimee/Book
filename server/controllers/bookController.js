@@ -1,5 +1,6 @@
 const Book = require('../models/Book')
 const Review = require('../models/Review')
+const Rating = require('../models/Rating')
 const { v4: uuid } = require('uuid')
 const uploadPicture = require('../middleware/multer')
 const fileRemove = require('../util/fileRemover')
@@ -130,13 +131,17 @@ const singleBook = async (req, res) => {
     try{
         const bookId = req.params.bookId
 
-        const book = await Book.findById(bookId).populate({
-            path: 'reviews',
-            populate: {
-                path: 'user',
-                select: 'firstName' // include only the 'firstName' field and exclude '_id'
-            }
-        })
+        const book = await Book.findById(bookId)
+            .populate({
+                path: 'reviews',
+                populate: {
+                    path: 'user',
+                    select: 'firstName' // include only the 'firstName' field and exclude '_id'
+                }
+            })
+            .populate({
+                path: 'ratings'
+            })
         console.log(book)
         if(!book) {
             return res.status(404).json({ error: "Book not found" })
@@ -146,6 +151,49 @@ const singleBook = async (req, res) => {
     }
     catch (error) {
         res.status(500).json({ error: "An error occured while retrieving the book" })
+    }
+}
+
+// Calculate the average rating of book
+const calculateAverageRating = async (req, res) => {
+    try {
+        const bookId = req.params.bookId
+        const book = await Book.findById(bookId)
+        if (!book) {
+            return res.status(404).json({ error: "Book not found" })
+        }
+
+        const ratings = await Rating.find({ book: bookId})
+        if (ratings.length === 0) {
+            return res.status(200).json({ averageRating : 0 })
+        }
+
+        const totalRating = ratings.reduce((sum, rating) => sum + rating.rating, 0)
+        const averageRating = totalRating / ratings.length
+
+        res.status(200).json({ averageRating: averageRating })
+    }
+    catch (error) {
+        res.status(500).json({ error: "An error occured while calculating average rating of book" })
+    }
+}
+
+const calculateNumberofRatings = async (req, res) => {
+    try {
+        const bookId = req.params.bookId
+        const book = await Book.findById(bookId);
+    
+        if (!book) {
+            return res.status(404).json({ error: 'Book not found' });
+        }
+
+        const numberOfRatings = await Rating.countDocuments({ book: bookId });
+
+        res.status(200).json({ numberOfRatings });
+    } 
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred' });
     }
 }
 
@@ -209,5 +257,7 @@ module.exports = {
     singleBook,
     searchBooks,
     filterBooks,
-    updateCoverImage
+    updateCoverImage,
+    calculateAverageRating,
+    calculateNumberofRatings
 }

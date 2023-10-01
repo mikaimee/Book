@@ -66,27 +66,6 @@ const deleteReview = async (req, res) => {
     }
 }
 
-// Calculate the average rating of a book
-const calculateAvgRating = async (req, res) => {
-    try {
-        const bookId = req.params.bookId
-        const reviews = await Review.find({ book: bookId })
-
-        if (reviews.length === 0) {
-            return res.status(200).json({ averageRating: 0})
-        }
-
-        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
-        const averageRating = totalRating / reviews.length
-
-        res.status(200).json({ averageRating })
-    }
-    catch(error) {
-        console.error(error)
-        res.status(500).json({ error: "An error occured while calculating the average rating" })
-    }
-}
-
 // Get the latest review
 const getLatestReview = async (req, res) => {
     try {
@@ -133,16 +112,27 @@ const getTopRatedBooks = async (req, res) => {
     }
 }
 
-// Get Reviews by Rating
-const getReviewsByRating = async (req, res) => {
+// Get Reviews by Rating (1 -> 5)
+const getReviewsByRatingAsc = async (req, res) => {
     try {
-        const minRating = parseInt(req.query.minRating) || 1
-        const maxRating = parseInt(req.query.maxRating) || 5
+        const bookId = req.params.bookId
+        const reviews = await Review.find({ book: bookId}).populate('rating')
+        reviews.sort((a, b) => a.rating.rating - b.rating.rating)
+        res.status(200).json({reviews})
+    }
+    catch(error) {
+        console.error(error)
+        res.status(500).json({ error: "An error occurred while retrieving reviews by rating" })
+    }
+}
 
-        const reviews = await Review.find({
-            rating: { $gte: minRating, $lte: maxRating } 
-        })
-        res.status(200).json(reviews)
+// Get Reviews by Rating (5 -> 1)
+const getReviewsByRatingDesc = async (req, res) => {
+    try {
+        const bookId = req.params.bookId
+        const reviews = await Review.find({ book: bookId}).populate('rating')
+        reviews.sort((a, b) => b.rating.rating - a.rating.rating)
+        res.status(200).json({reviews})
     }
     catch(error) {
         console.error(error)
@@ -184,10 +174,10 @@ module.exports = {
     createReview, 
     updateReview, 
     deleteReview, 
-    calculateAvgRating, 
     getLatestReview,
     getTopRatedBooks,
-    getReviewsByRating,
+    getReviewsByRatingAsc,
+    getReviewsByRatingDesc,
     sortReviewByDate,
     sortReviewsByRating
 }
