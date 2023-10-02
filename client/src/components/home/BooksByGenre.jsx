@@ -43,15 +43,26 @@ const BooksByGenre = ({ genreName }) => {
         () => getAllBooksforGenre(genreId),
         { enabled: !!genreId} // only query when genreId is available
     )
-    console.log('booksForGenreData: ', genreBooksData)
+    // console.log('booksForGenreData: ', genreBooksData)
 
     // CSS
     const containerRef = useRef(null)
     const scrollLeft = () => {
         if (containerRef.current) {
-            containerRef.current.scrollLeft -= 200
+            containerRef.current.scrollLeft -= 350
         }
     }
+    const scrollRight = () => {
+        if (containerRef.current) {
+            containerRef.current.scrollLeft += 350
+        }
+    }
+
+    const hasMoreItemsToLeft = containerRef.current && containerRef.current.scrollLeft > 0
+    const hasMoreItemsToRight =
+        containerRef.current &&
+        containerRef.current.scrollLeft + containerRef.current.clientWidth <
+        containerRef.current.scrollWidth
 
     if (!genreId) {
         return <div>Genre not found.</div>
@@ -66,14 +77,13 @@ const BooksByGenre = ({ genreName }) => {
     }
 
     return (
-        <div className='books-by-genre'>
-            <h2 className='bBG-genre-title'>{genreName}</h2>
-            <div className='bbG-book-item-container' ref={containerRef}>
+        <div className='hS-wrap'>
+            <h2 className='hS-title'>{genreName}</h2>
+            <div className='hS-item-container' ref={containerRef}>
                 {genreBooksData
                     .filter(book => book?.book?._id)
                     .map(book => (
-                    <Link to={`/book/${book?.book?._id}`} key={book?.book?._id}>
-                        <div className='bBG-book-iten'>
+                        <div className='hS-item' key={book?.book?._id}>
                             <div>
                                 <CoverImage 
                                     bookId={book?.book?._id}
@@ -81,13 +91,15 @@ const BooksByGenre = ({ genreName }) => {
                                     isEditable={false}
                                 />
                             </div>
-                            <h3 className='bBG-book-title'>{book?.book?.title}</h3>
-                            <p className='bBG-book-author'>{book?.book?.author}</p>
+                            <Link to={`/book/${book?.book?._id}`}>
+                                <h2 className='hS-title'>{book?.book?.title}</h2>
+                            </Link>
+                            <p className='hS-information'>{book?.book?.author}</p>
                         </div>
-                    </Link>
                 ))}
             </div>
-            <div className='bBg-scroll-button' onClick={scrollLeft}>&lt;</div>
+            <div className='hS-scroll-button left' onClick={scrollLeft}>&lt;</div>
+            <div className='hS-scroll-button right' onClick={scrollRight}>&gt;</div>
         </div>
     )
 }

@@ -8,15 +8,15 @@ import { HiOutlineCamera } from 'react-icons/hi'
 const CoverImage = ({ bookId, coverImage, isEditable }) => {
 
     const queryClient = useQueryClient()
-    const [photo, setPhoto] = useState(null)
-    const [openCrop, setOpenCrop] = useState(false)
+    const [selectedFile, setSelectedFile] = useState(null)
+    // const [photo, setPhoto] = useState(null)
+    // const [openCrop, setOpenCrop] = useState(false)
 
     const { mutate, isLoading } = useMutation({
         mutationFn:({ bookId, file }) => {
             return updateCoverImage({ bookId, file })
         },
         onSuccess: (data) => {
-            setOpenCrop(false);
             queryClient.invalidateQueries(['bookDetails'])
             toast.success(' Cover Image is removed')
         },
@@ -27,10 +27,18 @@ const CoverImage = ({ bookId, coverImage, isEditable }) => {
     })
 
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setPhoto({ url: URL.createObjectURL(file), file })
-        mutate({ bookId: bookId, file: file})
-        setOpenCrop(true);
+        const file = e.target.files[0]
+        console.log('Selected file: ',file)
+        setSelectedFile(file)
+    }
+
+    const handleUpdateClick = () => {
+        if (selectedFile) {
+            mutate({ bookId: bookId, file: selectedFile})
+        }
+        else {
+            console.log("Error while updating pic")
+        }
     }
 
     const handleDeleteImage = () => {
@@ -38,8 +46,7 @@ const CoverImage = ({ bookId, coverImage, isEditable }) => {
             try {
                 const formData = new FormData();
                 formData.append('coverImage', '');
-
-            mutate({ bookId: bookId, file: formData });
+                mutate({ bookId: bookId, file: formData });
             } 
             catch (error) {
             toast.error(error.message);
@@ -51,34 +58,47 @@ const CoverImage = ({ bookId, coverImage, isEditable }) => {
     return (
         <div className='cover-image-container'>
             <div className='cover-image'>
-                <label htmlFor='coverImage'>
-                    {coverImage ? (
-                        <img
-                            src={stables.UPLOAD_FOLDER_BASE_URL + coverImage}
-                            alt='book cover'
-                            className='book-cover-image'
-                        />
-                    ) : (
-                        <div className='no-cover-image'>
-                            <HiOutlineCamera />
-                        </div>
-                    )}
-                </label>
+                <div className='coverImage-wrapper'>
+                    <label htmlFor='coverImage'>
+                        {coverImage ? (
+                            <img
+                                src={stables.UPLOAD_FOLDER_BASE_URL + coverImage}
+                                alt='book cover'
+                                className='book-cover-image'
+                            />
+                        ) : (
+                            <div className='no-cover-image'>
+                                <HiOutlineCamera />
+                            </div>
+                        )}
+                    </label>
+                </div>
                 {isEditable && (
-                    <input
-                        type='file'
-                        id='profilePicture'
-                        onChange={handleFileChange}
-                    />
-                )}
+                        <input
+                            type='file'
+                            id='coverImage'
+                            onChange={handleFileChange}
+                            className='cI-input'
+                        />
+                    )}
             </div>
             {isEditable && (
-                <button
-                    onClick={handleDeleteImage}
-                    type='button'
-                >
-                    Delete
-                </button>
+                <div className="cI-button-container">
+                    <button
+                        onClick={handleUpdateClick}
+                        type='button'
+                        className='cI-button'
+                    >
+                        Update
+                    </button>
+                    <button
+                        onClick={handleDeleteImage}
+                        type='button'
+                        className='cI-button'
+                    >
+                        Delete
+                    </button>
+                </div>
             )}
         </div>
     )

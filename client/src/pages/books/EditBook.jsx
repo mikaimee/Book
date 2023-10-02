@@ -201,18 +201,18 @@ const EditBook = () => {
 
     return (
         <Layout>
-            <section>
+            <section className='form-section'>
                 <div>
-                    <h1>Edit Book</h1>
+                    <h1 className='form-section-title'>Edit Book</h1>
                     <div>
                     <CoverImage
-                            bookId={detailData?._id}
-                            coverImage={detailData?.coverImage}
-                            isEditable={true}
-                        />
+                        bookId={detailData?._id}
+                        coverImage={detailData?.coverImage}
+                        isEditable={true}
+                    />
                     </div>
                     <form onSubmit={handleSubmitBook(submitBookHandler)}>
-                        <div>
+                        <div className='form-group'>
                             <label htmlFor="title">Title</label>
                             <input 
                                 type='text'
@@ -229,7 +229,7 @@ const EditBook = () => {
                                 <p>{errorsBook.title?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='form-group'>
                             <label htmlFor="author">Author</label>
                             <input 
                                 type='text'
@@ -246,7 +246,7 @@ const EditBook = () => {
                                 <p>{errorsBook.author?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='form-group'>
                             <label htmlFor="pages">Pages</label>
                             <input 
                                 type='number'
@@ -263,7 +263,7 @@ const EditBook = () => {
                                 <p>{errorsBook.pages?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='form-group'>
                             <label htmlFor="publishedDate">PublishedDate</label>
                             <input 
                                 type='text'
@@ -280,7 +280,7 @@ const EditBook = () => {
                                 <p>{errorsBook.publishedDate?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='form-group'>
                             <label htmlFor="language">Language</label>
                             <input 
                                 type='text'
@@ -297,7 +297,7 @@ const EditBook = () => {
                                 <p>{errorsBook.language?.message}</p>
                             )}
                         </div>
-                        <div>
+                        <div className='form-group'>
                             <label htmlFor="ISBN">ISBN</label>
                             <input 
                                 type='text'
@@ -314,22 +314,23 @@ const EditBook = () => {
                                 <p>{errorsBook.ISBN?.message}</p>
                             )}
                         </div>
-                        <div>
-                            <div>
-                                <h3>Genres: </h3>
+                        <div className='form-group-genre-selection-checkbox-container'>
+                            <div className='form-group-genre-wrapper'>
+                                <label className='form-group-genre-selection-label'>Genres: </label>
                                 {selectedGenres.map((genreId) => {
                                     // Find the corresponding genre in allGenresData
                                     const genre = allGenresData.find((genre) => genre._id === genreId);
                                     return (
-                                        <div key={genreId}>
+                                        <div key={genreId} className='form-group-genre-box'>
                                             {genre ? (
-                                                <span>{genre.name}</span>
+                                                <span className='form-group-genre-name'>{genre.name}</span>
                                             ): (
                                                 <span>Genre not found</span>
                                             )}
                                             <button
                                                 type='button'
                                                 onClick={() => handleRemoveGenreClick(genre)}
+                                                className='form-group-genre-remove-button'
                                             >
                                                 X
                                             </button>
@@ -337,31 +338,36 @@ const EditBook = () => {
                                     );
                                 })}
                             </div>
-                            <div>
-                                <h3>Other Genres: </h3>
-                                {allGenresData ? (
-                                    unassociatedGenres.map((genre) => (
-                                        <div
-                                            key={genre._id}
-                                            onClick={() => handleAssociationClick(genre)}
-                                        >
-                                            {genre.name}
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p>Loading genres...</p>
-                                )}
+                            <div className='form-group-genre-wrapper'>
+                                <label className='form-group-genre-selection-label'>Other Genres: </label>
+                                <div className='form-group-other-genre-container'>
+                                    {allGenresData ? (
+                                        unassociatedGenres.map((genre) => (
+                                            <div
+                                                key={genre._id}
+                                                onClick={() => handleAssociationClick(genre)}
+                                                className='form-group-other-genre-box'
+                                            >
+                                                <span className='form-group-genre-name'>{genre.name}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>Loading genres...</p>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <button
-                            type="button"
-                            onClick={() => setIsAddingGenre(!isAddingGenre)}
-                            >
-                                {isAddingGenre ? 'Cancel' : '+'}
-                            </button>
+                        <div className='form-group-create-genre-container'>
+                            <div className='form-group-create-genre-button-container'>
+                                <button
+                                type="button"
+                                onClick={() => setIsAddingGenre(!isAddingGenre)}
+                                >
+                                    {isAddingGenre ? 'Cancel' : '+'}
+                                </button>
+                            </div>
                             {isAddingGenre && (
-                                <div>
+                                <div className='form-group-create-genre-input-container'>
                                     <label>Create New Genre: </label>
                                     <input
                                         type='text'
@@ -372,6 +378,7 @@ const EditBook = () => {
                                     />
                                 <button 
                                     type='button' 
+                                    className="add-genre-button"
                                     onClick={() => {
                                         const name = newGenreName.trim()
                                         if (name) {
@@ -384,7 +391,7 @@ const EditBook = () => {
                             </div>
                             )}
                         </div>
-                        <div>
+                        <div className='form-group'>
                             <label htmlFor="description">Description</label>
                             <textarea
                                 id='description'
@@ -400,33 +407,13 @@ const EditBook = () => {
                                 <p>{errorsBook.description?.message}</p>
                             )}
                         </div>
-                        {/* {userAssociation && (
-                            <div>
-                                <label htmlFor='readerStatus'>Status: </label>
-                                <Controller
-                                    name='readerStatus'
-                                    control={control}
-                                    defaultValue={detailData?.readerStatus}
-                                    render={({ field }) => (
-                                        <div>
-                                            <select {...field}>
-                                                <option value='Yet to Start'>Yet to Start</option>
-                                                <option value='In Progress'>In Progress</option>
-                                                <option value='Complete'>Complete</option>
-                                            </select>
-                                        </div>
-                                    )}
-                                />
-                                {errors.readerStatus?.message && (
-                                    <p>{errors.readerStatus?.message}</p>
-                                )}
-                            </div>
-                        )} */}
-                        <div>
-                            <button type="submit" disabled={!isValid || editBookIsLoading}>
+                        <button 
+                            type="submit" 
+                            disabled={!isValid || editBookIsLoading}
+                            className="form-group-submit-button"
+                        >
                                 Save
-                            </button>
-                        </div>
+                        </button>
                     </form>
                 </div>
             </section>

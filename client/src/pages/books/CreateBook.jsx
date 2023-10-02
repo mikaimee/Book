@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import './css/createBook.css'
 
 const CreateBook = () => {
 
@@ -109,11 +108,11 @@ const CreateBook = () => {
 
     return (
         <Layout>
-            <section className='add-book-section'>
+            <section className='form-section'>
                 <div>
-                    <h1>Add Book</h1>
+                    <h1 className='form-section-title'>Add Book</h1>
                     <form onSubmit={handleSubmit(submitHandler)}>
-                        <div className='aB-form-group'>
+                        <div className='form-group'>
                             <label htmlFor="title">Title</label>
                             <input 
                                 type='text'
@@ -130,7 +129,7 @@ const CreateBook = () => {
                                 <p>{errors.title?.message}</p>
                             )}
                         </div>
-                        <div className='aB-form-group'>
+                        <div className='form-group'>
                             <label htmlFor="author">Author</label>
                             <input 
                                 type='text'
@@ -147,7 +146,7 @@ const CreateBook = () => {
                                 <p>{errors.author?.message}</p>
                             )}
                         </div>
-                        <div className='aB-form-group'>
+                        <div className='form-group'>
                             <label htmlFor="pages">Pages</label>
                             <input 
                                 type='number'
@@ -164,7 +163,7 @@ const CreateBook = () => {
                                 <p>{errors.pages?.message}</p>
                             )}
                         </div>
-                        <div className='aB-form-group'>
+                        <div className='form-group'>
                             <label htmlFor="publishedDate">Published Year</label>
                             <input 
                                 type='text'
@@ -181,7 +180,7 @@ const CreateBook = () => {
                                 <p>{errors.publishedDate?.message}</p>
                             )}
                         </div>
-                        <div className='aB-form-group'>
+                        <div className='form-group'>
                             <label htmlFor="language">Language</label>
                             <input 
                                 type='text'
@@ -198,7 +197,7 @@ const CreateBook = () => {
                                 <p>{errors.language?.message}</p>
                             )}
                         </div>
-                        <div className='aB-form-group'>
+                        <div className='form-group'>
                             <label htmlFor="ISBN">ISBN</label>
                             <input 
                                 type='text'
@@ -215,9 +214,9 @@ const CreateBook = () => {
                                 <p>{errors.ISBN?.message}</p>
                             )}
                         </div>
-                        <div className='aB-genre-selection-container'>
+                        <div className='form-group-genre-selection-checkbox-container'>
                             <div>
-                                <label className='ab-genre-selection-label'>Select Genres:</label>
+                                <label className='form-group-genre-selection-label'>Select Genres:</label>
                                 {/* Check if genresData exists before mapping */}
                                 {genresData ? (
                                     genresData.map((genre) => (
@@ -240,9 +239,9 @@ const CreateBook = () => {
                                 )}
                             </div>
                         {/* Create Genre */}
-                            <div className='aB-create-genre-container'>
+                            <div className='form-group-create-genre-container'>
                                 {isAddingGenre ? (
-                                    <div>
+                                    <div className='form-group-create-genre-input-container'>
                                         <label>Create New Genre: </label>
                                         <input 
                                             type='text'
@@ -280,7 +279,7 @@ const CreateBook = () => {
                                 )}
                             </div>
                         </div>
-                        <div className='aB-form-group'>
+                        <div className='form-group'>
                             <label htmlFor="description">Description</label>
                             <textarea
                                 id='description'
@@ -299,7 +298,7 @@ const CreateBook = () => {
                         <button
                             type='submit'
                             disabled={!isValid}
-                            className="aB-add-book-button"
+                            className="form-group-submit-button"
                         >
                             Add Book
                         </button>

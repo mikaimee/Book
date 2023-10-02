@@ -38,6 +38,7 @@ body {
   padding: 20px;
   background-color: #fff;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid #a70505;
 }
 
 /* HEADER JSX */
@@ -112,15 +113,6 @@ body {
   margin-bottom: 20px;
 }
 
-.home-section {
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  width: 100%;
-}
-
 /* SEARCH */
 .search-bar-container{
   display: flex;
@@ -156,60 +148,426 @@ body {
   background-color: #ff6600;
 }
 
+/* HOME SECTION */
+.home-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  width: 100%;
+}
+
 /* BOOK BY GENRE */
-.books-by-genre {
+.hS-wrap {
   background-color: #fff;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   margin-bottom: 20px;
+  position: relative;
 }
 
-.bBG-genre-title {
+.hS-title {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.bbG-book-item-container {
+.hS-item-container {
   display: flex;
   flex-wrap: wrap; 
   gap: 20px;
+  padding: 15px;
+  max-height: 100%;
+  /* height: 400px;
+  flex-grow: 1; */
+  overflow-y: auto;
+  justify-content: space-between;
 }
 
-.bBG-book-item {
-  width: calc(33.33% - 20px);
+.hS-item-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.hS-item {
+  flex: 1;
+  max-width: 350px;
   margin-bottom: 10px;
   padding: 10px;
   background-color: #f9f9f9;
-  border: 1px solid #ccc;
   border-radius: 5px;
   text-align: center;
 }
 
-.bBG-book-title {
+.hS-title {
   font-size: 18px;
   font-weight: bold;
 }
 
-.bBG-book-author {
+.bBG-book-title a:visited {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.hS-information {
   font-size: 14px;
   color: #666;
 }
 
-.bBg-scroll-button {
+.hS-scroll-button {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #37438b;
+  color: white;
+  border-radius: 50%;
   position: absolute;
   top: 50%;
-  left: 0;
   transform: translateY(-50%);
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 50%;
-  padding: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  z-index: 1;
+  transition: background-color 0.2s, transform 0.2s;
+  font-size: 20px;
+  line-height: 1;
 }
 
-.bBg-scroll-button:hover {
-  background-color: #f9f9f9;
+.hS-scroll-button.left {
+  left: 0;
+}
+
+.hS-scroll-button.right {
+  right: 0;
+}
+
+/* COVER IMAGE */
+.cover-image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cover-image {
+  position: relative;
+  width: 200px; 
+  height: 230px;
+  border-radius: 4px;
+  overflow: hidden; 
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.coverImage-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.no-cover-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 24px;
+  color: #777777;
+}
+
+.book-cover-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cI-input {
+  margin: 10px 0;
+  padding: 5px;
+}
+
+.cI-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  margin-top: -5px;
+}
+
+.cI-button {
+  padding: 5px 10px;
+  background-color: #ff9900;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px; 
+}
+
+
+/* RATING */
+.rating-empty-star {
+  color: grey
+}
+
+.rating-full-star {
+  color: red;
+}
+
+/* FORMS */
+.form-section {
+  background-color:#fff;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  margin: 0 auto;
+  width: 75%;
+  max-width: 600px;
+}
+
+.form-section-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-section form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input[type='text'],
+.form-group input[type='number'],
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.form-group input[type='number'] {
+  width: 100%;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group p {
+  color: red;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.form-group-genre-selection-checkbox-container {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.form-group-genre-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.form-group-genre-selection-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.form-group-other-genre-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.form-group-genre-selection-checkbox-container input[type='checkbox'] {
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.form-group-genre-box{
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 5px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 25%;
+}
+
+.form-group-other-genre-box{
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.form-group-genre-name {
+  margin-right: 5px;
+}
+
+.form-group-genre-remove-button {
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.form-group-create-genre-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-group-create-genre-button-container {
+  margin-right: 10px
+}
+
+.form-group-create-genre-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group-create-genre-container label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group-create-genre-container input[type='text'] {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.form-group-create-genre-container button {
+  padding: 5px 10px;
+  background-color: #ff9900;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px; 
+}
+
+.form-group-create-genre-container button:last-child {
+  margin-right: 0;
+}
+
+.form-group-create-genre-container button.add-genre-button {
+  margin: 0 auto;
+  display: block;
+  margin-left: 10px;
+}
+
+.form-group-create-genre-container button:hover {
+  background-color: #ff6600;
+}
+
+.form-group-submit-button {
+  padding: 5px 10px;
+  background-color: #ff9900;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px; 
+  margin: 0 auto;
+  display: block;
+}
+
+.form-group-button[disabled]{
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/*BOOK DETAILS */
+.bD-section-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  background-color: #fff;
+  border: 1px solid red;
+}
+
+.bD-top-section {
+  display: flex;
+  margin: 20px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bD-section-left {
+  max-width: 300px;
+  padding: 10px;
+  flex: 1;
+}
+
+.bD-section-right {
+  flex: 2;
+  padding: 10px;
+}
+
+.dB-review-section {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid red;
 }

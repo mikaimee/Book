@@ -14,8 +14,9 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
     const queryClient = useQueryClient()
     const dispatch = useDispatch()
     const userState = useSelector((state) => state.user)
-    const [openCrop, setOpenCrop] = useState(false)
-    const [photo, setPhoto] = useState(null)
+    const [selectedFile, setSelectedFile] = useState(null)
+    // const [openCrop, setOpenCrop] = useState(false)
+    // const [photo, setPhoto] = useState(null)
 
     const { mutate, isLoading } = useMutation({
         mutationFn: ({ token, file }) => {
@@ -23,7 +24,6 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
         },
         onSuccess: (data) => {
             dispatch(userActions.setUserInfo(data));
-            setOpenCrop(false);
             localStorage.setItem('account', JSON.stringify(data));
             queryClient.invalidateQueries(['profile']);
             toast.success('Profile Photo is removed');
@@ -36,8 +36,17 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setPhoto({ url: URL.createObjectURL(file), file });
-        setOpenCrop(true);
+        console.log('Selected file: ', file)
+        setSelectedFile(file)
+    }
+
+    const handleUpdateClick = () => {
+        if (selectedFile) {
+            mutate({ token: userState?.userInfo?.token, file: selectedFile})
+        }
+        else {
+            console.log("Error while updating pic")
+        }
     }
 
     const handleDeleteImage = () => {
@@ -45,8 +54,7 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
             try {
                 const formData = new FormData();
                 formData.append('profilePicture', '');
-
-            mutate({ token: userState.userInfo.token, formData: formData });
+                mutate({ token: userState.userInfo.token, file: formData });
             } 
             catch (error) {
             toast.error(error.message);
@@ -78,18 +86,25 @@ const ProfilePic = ({ profilePicture, isEditable  }) => {
                         type='file'
                         id='profilePicture'
                         onChange={handleFileChange}
-                        className='profile-picture-input'
                     />
                 )}
             </div>
             {isEditable && (
-                <button
-                    onClick={handleDeleteImage}
-                    type='button'
-                    className="profile-picture-button"
-                >
-                    Delete
-                </button>
+                <div>
+                    <button
+                        onClick={handleUpdateClick}
+                        type='button'
+                    >
+                        Update
+                    </button>
+                    <button
+                        onClick={handleDeleteImage}
+                        type='button'
+                        className="profile-picture-button"
+                    >
+                        Delete
+                    </button>
+                </div>
             )}
         </div>
     )

@@ -7,7 +7,9 @@ const fileRemove = require('../util/fileRemover')
 
 const allBooks = async (req, res) => {
     try{
-        const books = await Book.find()
+        const books = await Book.find().populate({
+            path: 'ratings'
+        })
         res.status(200).json({ books })
     }
     catch(error) {
