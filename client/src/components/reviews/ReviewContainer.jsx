@@ -16,11 +16,12 @@ const ReviewContainer = ({loginUserId, reviews, bookId }) => {
         mutate: mutateNewReview,
         isLoading: newReviewIsLoading
     } = useMutation({
-        mutationFn: ({ token, text, rating, bookId }) => {
-            return createReview({ token, text, rating, bookId })
+        mutationFn: ({ token, text, bookId }) => {
+            return createReview({ token, text, bookId })
         },
         onSuccess: () => {
             toast.success("Review created successfully")
+            queryClient.invalidateQueries(['bookDetails', bookId])
         },
         onError: (error) => {
             toast.error(error.message)
@@ -32,8 +33,8 @@ const ReviewContainer = ({loginUserId, reviews, bookId }) => {
         mutate: mutateUpdateReview,
         isLoading: updateReviewIsLoading
     } = useMutation({
-        mutationFn: ({ token, text, rating, reviewId }) => {
-            return updateReview({ token, text, rating, reviewId })
+        mutationFn: ({ token, text, reviewId }) => {
+            return updateReview({ token, text, reviewId })
         },
         onSuccess: () => {
             toast.success("Review updated successfully")
@@ -49,7 +50,7 @@ const ReviewContainer = ({loginUserId, reviews, bookId }) => {
         mutate: mutateDeleteReview,
         isLoading: deleteReviewIsLoading
     } = useMutation({
-        mutationFn: ({ token, text, rating, reviewId }) => {
+        mutationFn: ({ token, text, reviewId }) => {
             return deleteReview({ token, reviewId })
         },
         onSuccess: () => {
@@ -62,20 +63,18 @@ const ReviewContainer = ({loginUserId, reviews, bookId }) => {
         }
     })
 
-    const createReviewHandler = (text, rating) => {
+    const createReviewHandler = (text) => {
         mutateNewReview({
             text,
-            rating,
             token: userState.userInfo.token,
             bookId
         })
         setAffectedReview(null)
     }
 
-    const updateReviewHandler = (text, rating, reviewId) => {
+    const updateReviewHandler = (text, reviewId) => {
         mutateUpdateReview({
             text,
-            rating,
             token: userState.userInfo.token,
             reviewId
         })
@@ -90,19 +89,18 @@ const ReviewContainer = ({loginUserId, reviews, bookId }) => {
         setAffectedReview(null)
     }
 
-    if (!reviews || reviews.length === 0) {
-        return <div>No Reviews available </div>
-    }
-
     return (
         <div>
             <div>
                 <CreateReview 
                     btnLabel="Send"
-                    formSubmitHandler={(text, rating) => createReviewHandler(text, rating)}
+                    formSubmitHandler={(text) => createReviewHandler(text)}
                     loading={newReviewIsLoading}
                 />
             </div>
+            {(!reviews || reviews.length === 0) && (
+                <div>No Reviews available </div>
+            )}
             <div>
                 {reviews.map((review) => (
                     <Review

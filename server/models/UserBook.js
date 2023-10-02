@@ -27,4 +27,4 @@ const UserBookSchema = new Schema({
     }
 }, {timestamps: true})
 
-module.exports = mongoose.model('UserBook', UserBookSchema);
+module.exports = mongoose.model('UserBook', UserBookSchema)

@@ -1,15 +1,13 @@
 import React, { useState } from 'react'
 
-const CreateReview = ({btnLabel, formSubmitHandler, formcancelHandler = null, initialText = "", initialRating = 0, loading = false}) => {
+const CreateReview = ({btnLabel, formSubmitHandler, formcancelHandler = null, initialText = "", loading = false}) => {
 
     const [text, setText] = useState(initialText)
-    const [rating, setRating] = useState(initialRating)
 
     const submitHandler = (e) => {
         e.preventDefault()
-        formSubmitHandler(text, rating)
+        formSubmitHandler(text)
         setText("")
-        setRating(0)
     }
 
     return (
@@ -22,14 +20,6 @@ const CreateReview = ({btnLabel, formSubmitHandler, formcancelHandler = null, in
                         cols="30" 
                         rows="10" 
                         onChange={(e) => setText(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Rating</label>
-                    <input 
-                        type='number'
-                        value={rating}
-                        onChange={(e) => setRating(e.target.value)}
                     />
                 </div>
                 <div>

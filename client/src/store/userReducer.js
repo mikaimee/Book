@@ -11,6 +11,12 @@ const userSlice = createSlice({
         },
         resetUserInfo(state, action) {
             state.userInfo = null
+        },
+        updateUserLibrary(state, action) {
+            state.userInfo = {
+                ...state.userInfo,
+                library: [...state.userInfo.library, action.payload.updatedLibraryData]
+            }
         }
     },
 })

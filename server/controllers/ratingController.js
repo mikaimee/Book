@@ -74,16 +74,18 @@ const deleteRating = async (req, res) => {
     }
 }
 
-const avgRating = async (req, res) => {
+const getSingleRating = async (req, res) => {
     try {
-        const bookId = req.params.bookId
-        const ratings = await Rating.find({ book: bookId })
-        if (ratings.length === 0) {
-            return 0
+        const ratingId = req.params.ratingId
+        const userId = req.user._id
+        const rating = await Rating.findById(ratingId)
+        if (!rating) {
+            return res.status(404).json({ error: "Rating not found" })
         }
-        const totalRatings = ratings.reduce((sum, rating) => sum + rating.rating, 0)
-        const averageRating = totalRatings / ratings.length
-        return averageRating
+        if (rating.user.toString() !== userId.toString()) {
+            return res.status(403).json({ error: "Unauthorized: You can only see your own ratings"})
+        }
+        res.status(200).json({ rating })
     }
     catch(error) {
         console.error(error)
@@ -96,5 +98,5 @@ module.exports = {
     createRating,
     updateRating,
     deleteRating,
-    avgRating
+    getSingleRating
 }

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getAllBooksforGenre } from '../../services/bookgenres'
 import { allGenres } from '../../services/genre'
 import CoverImage from '../book/CoverImage'
+import { Link } from 'react-router-dom'
 
 const BooksByGenre = ({ genreName }) => {
 
@@ -15,7 +16,7 @@ const BooksByGenre = ({ genreName }) => {
         isError: isErrorGenres,
         error: genresError
     } = useQuery(['allGenres'], allGenres)
-    console.log('genreData: ', genresData)
+    // console.log('genreData: ', genresData)
 
     // Set genreId based on genreName
     useEffect(() => {
@@ -29,7 +30,7 @@ const BooksByGenre = ({ genreName }) => {
             }
         }
     }, [genresData, genreName])
-    console.log("genreId: ",genreId)
+    // console.log("genreId: ",genreId)
 
     // Retrieve all books in one genre
     const {
@@ -68,18 +69,22 @@ const BooksByGenre = ({ genreName }) => {
         <div className='books-by-genre'>
             <h2 className='bBG-genre-title'>{genreName}</h2>
             <div className='bbG-book-item-container' ref={containerRef}>
-                {genreBooksData.map(book => (
-                    <div key={book?.book?._id} className='bBG-book-iten'>
-                        <div>
-                            <CoverImage 
-                                bookId={book?.book?._id}
-                                coverImage={book?.book?.coverImage}
-                                isEditable={false}
-                            />
+                {genreBooksData
+                    .filter(book => book?.book?._id)
+                    .map(book => (
+                    <Link to={`/book/${book?.book?._id}`} key={book?.book?._id}>
+                        <div className='bBG-book-iten'>
+                            <div>
+                                <CoverImage 
+                                    bookId={book?.book?._id}
+                                    coverImage={book?.book?.coverImage}
+                                    isEditable={false}
+                                />
+                            </div>
+                            <h3 className='bBG-book-title'>{book?.book?.title}</h3>
+                            <p className='bBG-book-author'>{book?.book?.author}</p>
                         </div>
-                        <h3 className='bBG-book-title'>{book?.book?.title}</h3>
-                        <p className='bBG-book-author'>{book?.book?.author}</p>
-                    </div>
+                    </Link>
                 ))}
             </div>
             <div className='bBg-scroll-button' onClick={scrollLeft}>&lt;</div>

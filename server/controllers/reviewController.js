@@ -27,7 +27,7 @@ const createReview = async (req, res) => {
 
 const updateReview = async (req, res) => {
     try {
-        const { reviewId, rating, text } = req.body
+        const { reviewId, text } = req.body
         
         const review = await Review.findById(reviewId)
         if (!review) {
@@ -36,9 +36,6 @@ const updateReview = async (req, res) => {
 
         // Update the review details if provided
         //typeof is a operator used to check the data type of variable or expression
-        if (typeof rating !== 'undefined') {
-            review.rating = rating
-        }
         if (typeof text !== 'undefined') {
             review.text = text
         }

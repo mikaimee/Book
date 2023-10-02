@@ -29,10 +29,9 @@ const Review = ({ review, loginUserId, affectedReview, setAffectedReview, addRev
                 {isEditing && (
                     <CreateReview 
                         btnLabel="Update"
-                        formSubmitHandler={(text, rating) => updateReview(text, rating, review._id)}
+                        formSubmitHandler={(text, rating) => updateReview(text, review._id)}
                         formcancelHandler={() => setAffectedReview(null)}
                         initialText={review.text}
-                        initialRating={review.rating}
                     />
                 )}
                 <div>

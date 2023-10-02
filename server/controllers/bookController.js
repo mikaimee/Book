@@ -154,49 +154,6 @@ const singleBook = async (req, res) => {
     }
 }
 
-// Calculate the average rating of book
-const calculateAverageRating = async (req, res) => {
-    try {
-        const bookId = req.params.bookId
-        const book = await Book.findById(bookId)
-        if (!book) {
-            return res.status(404).json({ error: "Book not found" })
-        }
-
-        const ratings = await Rating.find({ book: bookId})
-        if (ratings.length === 0) {
-            return res.status(200).json({ averageRating : 0 })
-        }
-
-        const totalRating = ratings.reduce((sum, rating) => sum + rating.rating, 0)
-        const averageRating = totalRating / ratings.length
-
-        res.status(200).json({ averageRating: averageRating })
-    }
-    catch (error) {
-        res.status(500).json({ error: "An error occured while calculating average rating of book" })
-    }
-}
-
-const calculateNumberofRatings = async (req, res) => {
-    try {
-        const bookId = req.params.bookId
-        const book = await Book.findById(bookId);
-    
-        if (!book) {
-            return res.status(404).json({ error: 'Book not found' });
-        }
-
-        const numberOfRatings = await Rating.countDocuments({ book: bookId });
-
-        res.status(200).json({ numberOfRatings });
-    } 
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'An error occurred' });
-    }
-}
-
 // Search books based on title, author, genre, or keywords in description
 const searchBooks = async (req, res) => {
     try{
@@ -257,7 +214,5 @@ module.exports = {
     singleBook,
     searchBooks,
     filterBooks,
-    updateCoverImage,
-    calculateAverageRating,
-    calculateNumberofRatings
+    updateCoverImage
 }
