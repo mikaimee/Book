@@ -80,7 +80,7 @@ const UpdateRating = ({ ratingId }) => {
 
     if (ratingIsSuccess) {
         return (
-            <div>
+            <div className='bD-information-rating-container'>
                 <p>Your Rating: </p>
                 <Rating
                     initialRating={existingRating}

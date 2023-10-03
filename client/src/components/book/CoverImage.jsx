@@ -5,7 +5,7 @@ import { updateCoverImage } from '../../services/book'
 import stables from '../../constants/stable'
 import { HiOutlineCamera } from 'react-icons/hi'
 
-const CoverImage = ({ bookId, coverImage, isEditable }) => {
+const CoverImage = ({ bookId, coverImage, isEditable, className }) => {
 
     const queryClient = useQueryClient()
     const [selectedFile, setSelectedFile] = useState(null)
@@ -56,50 +56,52 @@ const CoverImage = ({ bookId, coverImage, isEditable }) => {
     }
 
     return (
-        <div className='cover-image-container'>
-            <div className='cover-image'>
-                <div className='coverImage-wrapper'>
-                    <label htmlFor='coverImage'>
-                        {coverImage ? (
-                            <img
-                                src={stables.UPLOAD_FOLDER_BASE_URL + coverImage}
-                                alt='book cover'
-                                className='book-cover-image'
+        <div className={`${className}`}>
+            <div className='cover-image-container'>
+                <div className='cover-image'>
+                    <div className='coverImage-wrapper'>
+                        <label htmlFor='coverImage'>
+                            {coverImage ? (
+                                <img
+                                    src={stables.UPLOAD_FOLDER_BASE_URL + coverImage}
+                                    alt='book cover'
+                                    className='book-cover-image'
+                                />
+                            ) : (
+                                <div className='no-cover-image'>
+                                    <HiOutlineCamera />
+                                </div>
+                            )}
+                        </label>
+                    </div>
+                    {isEditable && (
+                            <input
+                                type='file'
+                                id='coverImage'
+                                onChange={handleFileChange}
+                                className='cI-input'
                             />
-                        ) : (
-                            <div className='no-cover-image'>
-                                <HiOutlineCamera />
-                            </div>
                         )}
-                    </label>
                 </div>
                 {isEditable && (
-                        <input
-                            type='file'
-                            id='coverImage'
-                            onChange={handleFileChange}
-                            className='cI-input'
-                        />
-                    )}
+                    <div className="cI-button-container">
+                        <button
+                            onClick={handleUpdateClick}
+                            type='button'
+                            className='cI-button'
+                        >
+                            Update
+                        </button>
+                        <button
+                            onClick={handleDeleteImage}
+                            type='button'
+                            className='cI-button'
+                        >
+                            Delete
+                        </button>
+                    </div>
+                )}
             </div>
-            {isEditable && (
-                <div className="cI-button-container">
-                    <button
-                        onClick={handleUpdateClick}
-                        type='button'
-                        className='cI-button'
-                    >
-                        Update
-                    </button>
-                    <button
-                        onClick={handleDeleteImage}
-                        type='button'
-                        className='cI-button'
-                    >
-                        Delete
-                    </button>
-                </div>
-            )}
         </div>
     )
 }

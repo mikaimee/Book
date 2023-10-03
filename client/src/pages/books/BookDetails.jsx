@@ -225,74 +225,27 @@ const BookDetails = () => {
     return (
         <Layout>
             <section className='bD-section-container'>
-                <div className='bD-top-section'>
-                    <div className='bD-section-left'>
-                        <CoverImage
-                            bookId={detailData?._id}
-                            coverImage={detailData?.coverImage}
-                            isEditable={false}
-                        />
-                    </div>
-                    <div className='bD-section-right'>
-                        <button
-                            type='button'
-                            onClick={() => navigate(`/book/${detailData?._id}/edit`)}
-                        >
-                            Edit
-                        </button>
-                        <h2>{ detailData?.title }</h2>
-                        <div>
-                            <p>Rating:</p>
-                            <Rating
-                                initialRating={averageRating.toFixed(2)}
-                                emptySymbol={<FontAwesomeIcon icon={faStar} />}
-                                fullSymbol={<FontAwesomeIcon icon={fasStar} />}
-                                readonly={true}
-                            />
-                            <p>{averageRating.toFixed(2)}</p>
-                            {numRatings > 1 ? (
-                                <p>{numRatings} ratings</p>
-                            ) : (
-                                <p>{numRatings} rating</p>
-                            )}
-                        </div>
-                        <p>Author: { detailData?.author }</p>
-                        <p>Pages: { detailData?.pages }</p>
-                        <p>Published Date: { detailData?.publishedDate }</p>
-                        <p>Language: { detailData?.language }</p>
-                        <div>
-                                <p>Genres: </p>
-                                <ul>
-                                    {genreData.map((genre) => (
-                                        <li key={genre._id}>{genre.genre.name}</li>
-                                    ))}
-                                </ul>
-                        </div>
-                        <p>ISBN: { detailData?.ISBN }</p>
-                        <p>Description: { detailData?.description }</p>
-                        {userState?.userInfo ? (
-                            hasUserRated ? (
-                                <UpdateRating ratingId={ratingId} />
-                            ) : (
-                                <CreateRating bookId={detailData?._id} />
-                            )
-                        ) : (
-                            <p>Please log in to rate</p>
-                        )}
-                        {userAssociation && (
-                            <div>
-                                <div>
-                                    {!isDropdownVisible ? (
+                <div className='bD-section-left'>
+                    <CoverImage
+                        bookId={detailData?._id}
+                        coverImage={detailData?.coverImage}
+                        isEditable={false}
+                    />
+                    {userAssociation && (
+                        <div className='uB-container'>
+                            <div className='uB-status-section'>
+                                {!isDropdownVisible ? (
+                                    <div>
+                                        <p>Status: {libraryData?.association?.readerStatus}</p>
+                                        <button onClick={toggleDropdown} className='uB-dropdown-button'>Update Status</button>
+                                    </div>
+                                ) : (
+                                    <button onClick={cancelEdit} className='uB-dropdown-button'>Cancel</button>
+                                )}
+                                {isDropdownVisible && (
+                                    <form onSubmit={handleSubmit(submitHandler)} className='uB-form'>
                                         <div>
-                                            <p>Status: {libraryData?.association?.readerStatus}</p>
-                                            <button onClick={toggleDropdown}>Update Status</button>
-                                        </div>
-                                    ) : (
-                                        <button onClick={cancelEdit}>Cancel</button>
-                                    )}
-                                    {isDropdownVisible && (
-                                        <form onSubmit={handleSubmit(submitHandler)}>
-                                            <div>
+                                            <div className='uB-form-selection-container'>
                                                 <label htmlFor='readerStatus'>Status:</label>
                                                 <Controller
                                                     name='readerStatus'
@@ -300,7 +253,7 @@ const BookDetails = () => {
                                                     defaultValue={libraryData?.association?.readerStatus}
                                                     render={({ field }) => (
                                                         <div>
-                                                            <select {...field}>
+                                                            <select {...field} className='uB-selections'>
                                                                 <option value='Yet to Start'>Yet to Start</option>
                                                                 <option value='In Progress'>In Progress</option>
                                                                 <option value='Complete'>Complete</option>
@@ -311,36 +264,105 @@ const BookDetails = () => {
                                                 {errors.readerStatus?.message && (
                                                     <p>{errors.readerStatus?.message}</p>
                                                 )}
-                                                <button type='submit'>Update Status</button>
-                                            </div>
-                                        </form>
-                                    )}
-                                    <p>Start Date: {formatDate(libraryData?.association?.readerStarted)}</p>
-                                    <p>Finish Date: {formatDate(libraryData?.association?.readerFinished)}</p>
-                                </div>
+                                                </div>
+                                            <button type='submit' className='uB-button'>Update Status</button>
+                                        </div>
+                                    </form>
+                                )}
+                                <p>Start Date: {formatDate(libraryData?.association?.readerStarted)}</p>
+                                <p>Finish Date: {formatDate(libraryData?.association?.readerFinished)}</p>
                             </div>
-                        )}
-                        <div>
-                            {!userAssociation && renderAddLibraryButton && (
-                                <button
-                                    onClick={handleAddLibrary}
-                                >
-                                    Add Book To Library
-                                </button>
-                            )}
                         </div>
+                    )}
+                    <div>
+                        {!userAssociation && renderAddLibraryButton && (
+                            <button
+                                onClick={handleAddLibrary}
+                                className='bD-button'
+                            >
+                                Add Book To Library
+                            </button>
+                        )}
                     </div>
                 </div>
-                <div className='dB-review-section'>
-                    {userState?.userInfo ? (
-                        <ReviewContainer 
-                            reviews={detailData?.reviews}
-                            loginUserId={userState?.userInfo?._id}
-                            bookId={bookId}
-                        />
-                    ) : (
-                        <p>Log in to leave a review</p>
-                    )}
+                <div className='bD-section-right'>
+                    <div className='bD-information-container'>
+                        <h2 className='bD-title'>{ detailData?.title }</h2>
+                        <button
+                            type='button'
+                            onClick={() => navigate(`/book/${detailData?._id}/edit`)}
+                            className='bD-button'
+                        >
+                            Edit
+                        </button>
+                    </div>
+                    <div className='bD-information-container'>
+                        <p className='bD-author'>{ detailData?.author }</p>
+                    </div>
+                    <div className='bD-information-container'>
+                        <div className='bD-information-rating-container'>
+                            <Rating
+                                initialRating={averageRating.toFixed(2)}
+                                emptySymbol={<FontAwesomeIcon icon={faStar} className='rating-empty-star'/>}
+                                fullSymbol={<FontAwesomeIcon icon={fasStar} className='rating-full-star' />}
+                                readonly={true}
+                            />
+                            <p>{averageRating.toFixed(2)}</p>
+                        </div>
+                        <div className='bD-information-rating-container'>
+                            {numRatings > 1 ? (
+                                <p>{numRatings} ratings</p>
+                            ) : (
+                                <p>{numRatings} rating</p>
+                            )}
+                            <p> # reviews</p>
+                        </div>
+                    </div>
+                    <div className='bD-information-container'>
+                        <p className='bD-description'>{ detailData?.description }</p>
+                    </div>
+                    <div className='bD-information-container'>
+                        <p className='bD-genre-title'>Genres </p>
+                        <ul className='bD-genre-list'>
+                            {genreData.map((genre) => (
+                                <li key={genre._id} className='bD-genre-item'>
+                                    <span className='bD-genre-name'>{genre.genre.name}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className='bD-information-container-2'>
+                        <p>Pages: { detailData?.pages }</p>
+                        <p>Published Date: { detailData?.publishedDate }</p>
+                        <p>Language: { detailData?.language }</p>
+                        <p>ISBN: { detailData?.ISBN }</p>
+                    </div>
+                    <hr/>
+                    <div className='dB-review-section'>
+                        <h3>Your Ratings and Reviews</h3>
+                        <div>
+                            {userState?.userInfo ? (
+                                hasUserRated ? (
+                                    <UpdateRating ratingId={ratingId} />
+                                ) : (
+                                    <CreateRating bookId={detailData?._id} />
+                                )
+                            ) : (
+                                <p>Please log in to rate</p>
+                            )}
+                        </div>
+                        <div>
+                        {userState?.userInfo ? (
+                            <ReviewContainer 
+                                reviews={detailData?.reviews}
+                                loginUserId={userState?.userInfo?._id}
+                                bookId={bookId}
+                            />
+                        ) : (
+                            <p>Log in to leave a review</p>
+                        )}
+                        </div>
+                    </div>
                 </div>
             </section>
         </Layout>

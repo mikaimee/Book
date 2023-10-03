@@ -11,9 +11,9 @@ const CreateReview = ({btnLabel, formSubmitHandler, formcancelHandler = null, in
     }
 
     return (
-        <div>
+        <div className='cR-conrainer'>
             <form onSubmit={submitHandler}>
-                <div>
+                <div className='form-group'>
                     <textarea 
                         placeholder='Leave review here'
                         value={text}
@@ -26,6 +26,7 @@ const CreateReview = ({btnLabel, formSubmitHandler, formcancelHandler = null, in
                     {formcancelHandler && (
                         <button
                             onClick={formcancelHandler}
+                            className='uB-button'
                         >
                             Cancel
                         </button>
@@ -33,6 +34,7 @@ const CreateReview = ({btnLabel, formSubmitHandler, formcancelHandler = null, in
                     <button
                         disabled={loading}
                         type='submit'
+                        className='uB-button'
                     >
                         {btnLabel}
                     </button>

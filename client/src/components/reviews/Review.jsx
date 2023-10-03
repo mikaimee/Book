@@ -9,21 +9,24 @@ const Review = ({ review, loginUserId, affectedReview, setAffectedReview, addRev
 
 
     return (
-        <div>
-            <div>
-                <h5>{review.user.firstName}</h5>
-                <span>
+        <div className='eR-container'>
+            <div className='eR-left'>
+                <p className='review-username'>{review.user.firstName}</p>
+                <p>
                     {new Date(review.createdAt).toLocaleDateString("en-US", {
                         day: 'numeric',
                         month: 'short',
                         year: 'numeric',
-                        hour: '2-digit'
+                        hour: '2-digit',
+                        minute: '2-digit'
                     })}
-                </span>
+                </p>
+            </div>
+            <div className='eR-right'>
+                <div>
                 {!isEditing && (
                     <div>
-                        <p>{review.text}</p>
-                        <p>{review.rating}</p>
+                        <p className='review-text'>{review.text}</p>
                     </div>
                 )}
                 {isEditing && (
@@ -34,16 +37,19 @@ const Review = ({ review, loginUserId, affectedReview, setAffectedReview, addRev
                         initialText={review.text}
                     />
                 )}
-                <div>
+                </div>
+                <div className='review-button-container'>
                     {reviewBelongsToUser && (
                         <>
                             <button
                                 onClick={() => setAffectedReview({ type: 'editing', _id: review._id })}
+                                className='bD-button'
                             >
                                 <span>Edit</span>
                             </button>
                             <button
                                 onClick={() => deleteReview(review._id)}
+                                className='bD-button'
                             >
                                 <span>Delete</span>
                             </button>

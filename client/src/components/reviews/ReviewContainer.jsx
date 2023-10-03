@@ -90,7 +90,7 @@ const ReviewContainer = ({loginUserId, reviews, bookId }) => {
     }
 
     return (
-        <div>
+        <div className='review-container'>
             <div>
                 <CreateReview 
                     btnLabel="Send"

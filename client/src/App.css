@@ -38,7 +38,6 @@ body {
   padding: 20px;
   background-color: #fff;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  border: 2px solid #a70505;
 }
 
 /* HEADER JSX */
@@ -540,34 +539,259 @@ body {
 /*BOOK DETAILS */
 .bD-section-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
-  background-color: #fff;
-  border: 1px solid red;
-}
-
-.bD-top-section {
-  display: flex;
-  margin: 20px;
   flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  position: relative;
 }
 
 .bD-section-left {
   max-width: 300px;
   padding: 10px;
   flex: 1;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
 }
 
 .bD-section-right {
   flex: 2;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  padding: 30px;
+}
+
+.bD-section-right > * {
+  align-self: flex-start;
+  padding-left: 20px;
+}
+
+.bD-information-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.bD-title {
+  font-size: 30px;
+  margin-right: 20px;
+}
+
+.bD-author {
+  font-size: 24px;
+  color: grey;
+}
+
+.bD-information-rating-container {
+  display: flex;
+  padding: 5px;
+  font-size: 20px;
+  justify-content: center;
+}
+
+.bD-information-rating-container p {
+  margin-left: 10px;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.bD-description {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+  margin-top: 20px;
+}
+
+.bD-genre-title{
+  font-size: 16px;
+  margin-right: 15px;
+  color: grey;
+}
+
+.bD-genre-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bD-genre-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.bD-genre-item span {
+  font-weight: bold;
+  text-decoration: underline;
+  text-decoration-color: green;
+  text-decoration-thickness: 2px;
+}
+
+.bD-information-container-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.bD-information-container-2 p{
+  margin-bottom: 5px;
+  margin-top: 2px;
+  color: grey;
+}
+
+.bD-button {
+  padding: 5px 10px;
+  background-color: #ff9900;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bD-button:hover {
+  background-color: #ff6600
+}
+
+hr {
+  width: 90%;
 }
 
 .dB-review-section {
   margin-top: 20px;
   padding: 10px;
-  border: 1px solid red;
+  width: 100%;
+}
+
+/*REVIEW */
+.review-container {
+  margin-top: 20px;
+}
+
+.cR-conrainer {
+  padding: 10px;
+}
+
+.eR-container {
+  border: none;
+  padding: 5px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  background-color: #f6f2f2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.eR-left {
+  max-width: 300px;
+  padding: 10px;
+  flex: 1;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  align-items: flex-start;
+}
+
+.review-username {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.eR-right {
+  flex: 2;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  align-items: flex-start;
+}
+
+.review-text {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.review-button-container {
+  width: 50%;
+  display: flex;
+  align-items: flex-start;
+}
+
+.review-button-container button {
+  margin-left: 10px;
+}
+
+
+/* USERBOOK */
+.uB-container {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f7f7f7;
+  display: flex;
+  justify-content: center;
+}
+
+.uB-status-section {
+  margin: 10px;
+}
+
+.uB-status-section p {
+  margin: 0;
+}
+
+.uB-dropdown-button {
+  background-color: #ff9900;
+  color: #fff;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 10px;
+}
+
+.uB-dropdown-button,
+.uB-status-form {
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.uB-form-selection-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+
+}
+
+.uB-selections {
+  padding: 5px;
+}
+
+.uB-button {
+  background-color: #ff9900;
+  color: #fff;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 10px;
+}
+
+.uB-button:hover {
+  background-color: #ff6600
+}
+
+.uB-container p {
+  margin-bottom: 5px;
+  margin-top: 5px;
 }

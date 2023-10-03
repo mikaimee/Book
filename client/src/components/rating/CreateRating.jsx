@@ -38,7 +38,7 @@ const CreateRating = ({ bookId }) => {
 
 
     return (
-        <div>
+        <div className='bD-information-rating-container'>
             <p>Your Rating: </p>
             <Rating
                 initialRating={rating}
@@ -47,7 +47,7 @@ const CreateRating = ({ bookId }) => {
                 onClick={setRating}
                 readonly={isLoading}
             />
-            <button onClick={handleRateClick} disabled={isLoading}>
+            <button onClick={handleRateClick} disabled={isLoading} className='bD-button'>
                 Rate
             </button>
         </div>
