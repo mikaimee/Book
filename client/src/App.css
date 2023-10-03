@@ -795,3 +795,69 @@ hr {
   margin-bottom: 5px;
   margin-top: 5px;
 }
+
+/*LIBRARY*/
+
+.mL-pagetitle {
+  margin-top: 40px;
+  font-size: 36px;
+  font-weight: bold;
+}
+.mL-container-left {
+  flex: 2;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  padding: 30px;
+}
+
+.mL-form-selection-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: end;
+}
+
+.mL-form-selection-container label {
+  margin-right: 5px;
+}
+
+.mL-book-item {
+  display: flex;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.mL-container-right {
+  max-width: 300px;
+  padding: 10px;
+  flex: 1;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+}
+
+.mL-book-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.mL-book-info p {
+  margin-top: 5px;
+  color: #555
+}
+
+.mL-book-title-link {
+  font-size: 24px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
