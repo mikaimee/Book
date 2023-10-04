@@ -20,7 +20,7 @@ const BookList = ({ selectedStatus }) => {
         },
         queryKey: ["library"]
     })
-    console.log('library data: ', libraryData)
+    // console.log('library data: ', libraryData)
 
     if(isLoading) {
         return <div>Loading...</div>

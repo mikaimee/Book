@@ -861,3 +861,36 @@ hr {
     color: #333;
     font-weight: bold;
 }
+
+.mL-book-counter{
+  text-align: center;
+  padding: 20px;
+}
+
+.mL-book-counter h4 {
+  font-size: 16px;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mL-book-counter h4 button {
+  background-color: #ff9900;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 0px 5px 0px 5px
+}
+
+.mL-book-counter h4 button:hover{
+  background-color: #ff6600
+}
+
+.mL-book-counter p {
+  font-size: 16px;
+  margin-top: 20px;
+}

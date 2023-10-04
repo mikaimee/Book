@@ -1,13 +1,9 @@
 import React, {useState} from 'react'
 import Layout from '../../components/Layout'
-import { useSelector } from 'react-redux'
-import { useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
-import { getAllBooksForUser } from '../../services/userbooks'
-import CoverImage from '../../components/book/CoverImage'
 
 import FilterButton from '../../components/library/FilterButton'
 import BookList from '../../components/library/BookList'
+import BooksReadCounter from '../../components/library/BooksReadCounter'
 
 const MyLibrary = () => {
 
@@ -23,7 +19,9 @@ const MyLibrary = () => {
                         <BookList selectedStatus={selectedStatus}/>
                     </div>
                     <div className='mL-container-right'>
-                        Where progress will eventually go
+                        <h3>Check out your progress here</h3>
+                        <hr/>
+                        <BooksReadCounter />
                     </div>
                 </div>
             </section>
