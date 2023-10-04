@@ -865,6 +865,9 @@ hr {
 .mL-book-counter{
   text-align: center;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .mL-book-counter h4 {
@@ -893,4 +896,12 @@ hr {
 .mL-book-counter p {
   font-size: 16px;
   margin-top: 20px;
+}
+
+.mL-chart-wrapper {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
 }

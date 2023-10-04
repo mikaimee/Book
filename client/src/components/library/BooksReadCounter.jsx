@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { getAllBooksForUser } from '../../services/userbooks'
 import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label } from 'recharts'
 
 const BooksReadCounter = () => {
 
@@ -9,6 +10,7 @@ const BooksReadCounter = () => {
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1)
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
     const userState = useSelector((state) => state.user)
+    const [monthlyBookCount, setMonthlyBookCount] = useState([])
 
     const {
         data: libraryData,
@@ -23,7 +25,7 @@ const BooksReadCounter = () => {
     })
     // console.log('library data: ', libraryData)
 
-    useEffect(() => {
+    const updateGraphData = () => {
         if (libraryData && libraryData.length > 0) {
             // filter books that are read 
             const readBooks = libraryData.filter(item => item.readerFinished)
@@ -37,8 +39,53 @@ const BooksReadCounter = () => {
                 )
             })
             setBooksReadCount(booksReadInMonthYear.length)
+
+            // Calculate number of books read for each month of year
+            const monthlyCounts = Array.from({ length: 12 }, (_, monthIndex) => {
+                const booksReadInMonth = booksWithCompletionDate.filter((item) => {
+                    const completionDate = new Date(item.readerFinished)
+                    return (
+                        completionDate.getMonth() === monthIndex && completionDate.getFullYear() === selectedYear
+                    )
+                })
+                return { month: monthIndex + 1, count: booksReadInMonth.length }
+            })
+            setMonthlyBookCount(monthlyCounts)
         }
-    }, [libraryData, selectedMonth, selectedYear])
+    }
+
+    useEffect(() => {
+        updateGraphData()
+    }, [selectedYear])
+
+    // useEffect(() => {
+    //     if (libraryData && libraryData.length > 0) {
+    //         // filter books that are read 
+    //         const readBooks = libraryData.filter(item => item.readerFinished)
+    //         // filter books that have completion date
+    //         const booksWithCompletionDate = readBooks.filter(item => item.readerFinished)
+    //         // filter books read in selected month and year
+    //         const booksReadInMonthYear = booksWithCompletionDate.filter(item => {
+    //             const completionDate = new Date(item.readerFinshed)
+    //             return (
+    //                 completionDate.getMonth() + 1 === selectedMonth && completionDate.getFullYear() === selectedYear
+    //             )
+    //         })
+    //         setBooksReadCount(booksReadInMonthYear.length)
+
+    //         // Calculate number of books read for each month of year
+    //         const monthlyCounts = Array.from({ length: 12 }, (_, monthIndex) => {
+    //             const booksReadInMonth = booksWithCompletionDate.filter((item) => {
+    //                 const completionDate = new Date(item.readerFinished)
+    //                 return (
+    //                     completionDate.getMonth() === monthIndex && completionDate.getFullYear() === selectedYear
+    //                 )
+    //             })
+    //             return { month: monthIndex + 1, count: booksReadInMonth.length }
+    //         })
+    //         setMonthlyBookCount(monthlyCounts)
+    //     }
+    // }, [libraryData, selectedMonth, selectedYear])
 
     const handlePrevMonth = () => {
         if (selectedMonth === 1) {
@@ -78,6 +125,18 @@ const BooksReadCounter = () => {
                 )}
             </h4>
             <p>You've read {booksReadCount} books</p>
+
+            <div className='mL-chart-wrapper'>
+                <LineChart width={300} height={200} data={monthlyBookCount}>
+                    <XAxis dataKey="month"/>
+                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="count" name='Books Read' stroke='#8884d8'/>
+                </LineChart>
+            </div>
+            
         </div>
     )
 }
