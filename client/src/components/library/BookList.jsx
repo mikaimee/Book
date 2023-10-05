@@ -60,7 +60,7 @@ const BookList = ({ selectedStatus }) => {
                             <p>Author: {book.book.author}</p>
                             <p>Status: {book.readerStatus}</p>
                             <p>Started Date: {formatDate(book.readerStarted)}</p>
-                            <p>Finished Date: {formatDate(book.readerFnished)}</p>
+                            <p>Finished Date: {formatDate(book.readerFinished)}</p>
                         </div>
                     </li>
                 ))}

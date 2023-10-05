@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, memo } from 'react'
 import { getAllBooksForUser } from '../../services/userbooks'
 import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
@@ -11,6 +11,7 @@ const BooksReadCounter = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
     const userState = useSelector((state) => state.user)
     const [monthlyBookCount, setMonthlyBookCount] = useState([])
+    const [graphData, setGraphData] = useState({booksReadCount: 0, monthlyBookCount: []})
 
     const {
         data: libraryData,
@@ -23,69 +24,49 @@ const BooksReadCounter = () => {
         },
         queryKey: ["library"]
     })
-    // console.log('library data: ', libraryData)
+    console.log('library data: ', libraryData)
 
-    const updateGraphData = () => {
-        if (libraryData && libraryData.length > 0) {
-            // filter books that are read 
-            const readBooks = libraryData.filter(item => item.readerFinished)
-            // filter books that have completion date
-            const booksWithCompletionDate = readBooks.filter(item => item.readerFinished)
-            // filter books read in selected month and year
-            const booksReadInMonthYear = booksWithCompletionDate.filter(item => {
-                const completionDate = new Date(item.readerFinshed)
+    const memoizedGraphData = useMemo(() => {
+        if (!libraryData || libraryData.length === 0) {
+            return {
+                booksReadCount: 0,
+                monthlyBookCount: []
+            }
+        }
+
+        // Filter books with completion data
+        const booksWithCompletionDate = libraryData.filter((item) => item.readerFinished)
+        // Filter books read in selected month and year
+        const booksReadInMonthYear = booksWithCompletionDate.filter((item) => {
+            const completionDate = new Date(item.readerFinished)
+            return (
+                completionDate.getMonth() + 1 === selectedMonth &&
+                completionDate.getFullYear() === selectedYear
+            )
+        })
+
+        // Calculate number of books read for each month
+        const monthlyCounts = Array.from({ length: 12 }, (_, monthIndex) => {
+            const booksReadInMonth = booksWithCompletionDate.filter((item) => {
+                const completionDate = new Date(item.readerFinished)
                 return (
-                    completionDate.getMonth() + 1 === selectedMonth && completionDate.getFullYear() === selectedYear
+                    completionDate.getMonth() === monthIndex &&
+                    completionDate.getFullYear() === selectedYear
                 )
             })
-            setBooksReadCount(booksReadInMonthYear.length)
-
-            // Calculate number of books read for each month of year
-            const monthlyCounts = Array.from({ length: 12 }, (_, monthIndex) => {
-                const booksReadInMonth = booksWithCompletionDate.filter((item) => {
-                    const completionDate = new Date(item.readerFinished)
-                    return (
-                        completionDate.getMonth() === monthIndex && completionDate.getFullYear() === selectedYear
-                    )
-                })
-                return { month: monthIndex + 1, count: booksReadInMonth.length }
-            })
-            setMonthlyBookCount(monthlyCounts)
+            return { month: monthIndex + 1, count: booksReadInMonth.length}
+        })
+        return {
+            booksReadCount: booksReadInMonthYear.length,
+            monthlyBookCount: monthlyCounts
         }
-    }
+    }, [libraryData, selectedMonth, selectedYear])
 
     useEffect(() => {
-        updateGraphData()
-    }, [selectedYear])
+        setGraphData(memoizedGraphData)
+    }, [memoizedGraphData])
 
-    // useEffect(() => {
-    //     if (libraryData && libraryData.length > 0) {
-    //         // filter books that are read 
-    //         const readBooks = libraryData.filter(item => item.readerFinished)
-    //         // filter books that have completion date
-    //         const booksWithCompletionDate = readBooks.filter(item => item.readerFinished)
-    //         // filter books read in selected month and year
-    //         const booksReadInMonthYear = booksWithCompletionDate.filter(item => {
-    //             const completionDate = new Date(item.readerFinshed)
-    //             return (
-    //                 completionDate.getMonth() + 1 === selectedMonth && completionDate.getFullYear() === selectedYear
-    //             )
-    //         })
-    //         setBooksReadCount(booksReadInMonthYear.length)
-
-    //         // Calculate number of books read for each month of year
-    //         const monthlyCounts = Array.from({ length: 12 }, (_, monthIndex) => {
-    //             const booksReadInMonth = booksWithCompletionDate.filter((item) => {
-    //                 const completionDate = new Date(item.readerFinished)
-    //                 return (
-    //                     completionDate.getMonth() === monthIndex && completionDate.getFullYear() === selectedYear
-    //                 )
-    //             })
-    //             return { month: monthIndex + 1, count: booksReadInMonth.length }
-    //         })
-    //         setMonthlyBookCount(monthlyCounts)
-    //     }
-    // }, [libraryData, selectedMonth, selectedYear])
+    // console.log("graphData: ",graphData)
 
     const handlePrevMonth = () => {
         if (selectedMonth === 1) {
@@ -124,10 +105,10 @@ const BooksReadCounter = () => {
                     <button onClick={handleNextMonth}>&gt;</button>
                 )}
             </h4>
-            <p>You've read {booksReadCount} books</p>
+            <p>You've read {graphData.booksReadCount} books</p>
 
             <div className='mL-chart-wrapper'>
-                <LineChart width={300} height={200} data={monthlyBookCount}>
+                <LineChart width={300} height={200} data={graphData.monthlyBookCount}>
                     <XAxis dataKey="month"/>
                     <YAxis />
                     <CartesianGrid strokeDasharray="3 3" />
@@ -136,7 +117,6 @@ const BooksReadCounter = () => {
                     <Line type="monotone" dataKey="count" name='Books Read' stroke='#8884d8'/>
                 </LineChart>
             </div>
-            
         </div>
     )
 }

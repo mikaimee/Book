@@ -156,18 +156,23 @@ const BookDetails = () => {
     // submit Handler 
     const submitHandler = (data) => {
         const {readerStatus, readerStarted, readerFinished} = data
-        let updatedReaderStarted = null
-        let updatedReaderFinished = null
+        let updatedReaderStarted = readerStarted
+        let updatedReaderFinsihed = readerFinished
+
         if (readerStatus === 'In Progress') {
             updatedReaderStarted = new Date().toISOString()
         }
         else if (readerStatus === 'Complete') {
-            updatedReaderFinished = new Date().toISOString()
+            updatedReaderFinsihed = readerStarted || new Date().toISOString()
+        }
+        else if (readerStatus === 'Yet to Start') {
+            updatedReaderStarted = null
+            updatedReaderFinsihed = null
         }
         const updatedData = {
             ...data,
             readerStarted: updatedReaderStarted,
-            readerFinished: updatedReaderFinished,
+            readerFinished: updatedReaderFinsihed,
         }
         editUserBookMutate (updatedData)
         queryClient.invalidateQueries(['library'])

@@ -4,6 +4,7 @@ import Layout from '../../components/Layout'
 import FilterButton from '../../components/library/FilterButton'
 import BookList from '../../components/library/BookList'
 import BooksReadCounter from '../../components/library/BooksReadCounter'
+import GenrePieChart from '../../components/library/GenrePieChart'
 
 const MyLibrary = () => {
 
@@ -22,6 +23,8 @@ const MyLibrary = () => {
                         <h3>Check out your progress here</h3>
                         <hr/>
                         <BooksReadCounter />
+                        <hr />
+                        <GenrePieChart />
                     </div>
                 </div>
             </section>

@@ -79,7 +79,15 @@ const getAllBooksForUser = async (req, res) => {
     try {
         const userId = req.user._id
         const associations = await UserBook.find({ user: userId })
-            .populate('book')  // populate book details
+            .populate({
+                path: 'book',
+                populate: {
+                    path: 'genres',
+                    populate: {
+                        path: 'genre'
+                    }
+                }
+            })  // populate book details
         res.status(200).json(associations)
     }
     catch(error) {
