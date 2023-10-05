@@ -16,15 +16,19 @@ const MyLibrary = () => {
                 <h2 className='mL-pagetitle'>My Library</h2>
                 <div className='bD-section-container'>
                     <div className='mL-container-left'>
-                        <FilterButton setSelectedStatus={setSelectedStatus}/>
-                        <BookList selectedStatus={selectedStatus}/>
+                        <div className='mL-container-scroll'>
+                            <FilterButton setSelectedStatus={setSelectedStatus}/>
+                            <BookList selectedStatus={selectedStatus}/>
+                        </div>
                     </div>
                     <div className='mL-container-right'>
-                        <h3>Check out your progress here</h3>
-                        <hr/>
-                        <BooksReadCounter />
-                        <hr />
-                        <GenrePieChart />
+                        <div className='mL-container-scroll'>
+                            <h3>Check out your progress here</h3>
+                            <hr/>
+                            <BooksReadCounter />
+                            <hr />
+                            <GenrePieChart />
+                        </div>
                     </div>
                 </div>
             </section>

@@ -799,7 +799,7 @@ hr {
 /*LIBRARY*/
 
 .mL-pagetitle {
-  margin-top: 40px;
+  margin-top: 20px;
   font-size: 36px;
   font-weight: bold;
 }
@@ -807,8 +807,14 @@ hr {
   padding: 10px;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
   padding: 30px;
+}
+
+.mL-container-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 20px;
+
 }
 
 .mL-form-selection-container {
@@ -831,15 +837,13 @@ hr {
 }
 
 .mL-container-right {
-  /* max-width: 300px; */
-  padding: 10px;
+  padding: 5px;
   position: sticky;
   top: 0;
   display: flex;
   flex-direction: column;
   padding: 30px;
-  margin-left: 30px;
-  overflow-y: scroll;
+
 }
 
 .mL-book-info {
