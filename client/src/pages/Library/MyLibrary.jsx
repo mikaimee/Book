@@ -12,9 +12,9 @@ const MyLibrary = () => {
 
     return (
         <Layout>
-            <section>
+            <section className='mL-section'>
                 <h2 className='mL-pagetitle'>My Library</h2>
-                <div className='bD-section-container'>
+                <div className='mL-section-container'>
                     <div className='mL-container-left'>
                         <div className='mL-container-scroll'>
                             <FilterButton setSelectedStatus={setSelectedStatus}/>

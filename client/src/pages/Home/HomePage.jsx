@@ -41,6 +41,9 @@ const HomePage = () => {
                 <div className='home-section'>
                     <BooksByGenre genreName="fantasy" />
                 </div>
+                <div className='home-section'>
+                    <BooksByGenre genreName="Classics" />
+                </div>
             </div>
         </Layout>
     )

@@ -44,7 +44,7 @@ const BookList = ({ selectedStatus }) => {
     }
 
     return (
-        <div>
+        <div className='mL-book-div'>
             <ul>
                 {filteredLibraryData.map(book => (
                     <li key={book.book._id} className='mL-book-item'>

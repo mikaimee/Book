@@ -31,7 +31,6 @@ const CreateBook = () => {
             return createBook({ title, author, pages, publishedDate, description, language, ISBN, slug, coverImage })
         },
         onSuccess: async (data) => {
-            toast.success("Successfylly created book")
             console.log(data)
             const bookId = data.book._id
 
@@ -41,6 +40,7 @@ const CreateBook = () => {
                     await createBookGenreAssociation(bookId, genre._id)
                 })
             )
+            toast.success("Successfylly created book")
             navigate(`/book/${bookId}`)
         },
         onError: (error) => {
