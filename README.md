@@ -4,9 +4,9 @@ Welcome to "My Books" application!  This MERN (MongoDB, Express.js, React, Node.
 
 
 ## Features
-- **User Authentication**: Users an create accounts, login and secure their personal reading lists.
+- **User Authentication**: Users can create accounts, log in, and secure their personal reading lists.
   
-- **Book Tracking**: Add, edit, and remove books from your reading list. Track details like book title, author, genre, and your rating.
+- **Book Tracking**: Add, edit, and remove books from your reading list. Track details like book title, author, genre, and rating.
 
 - **Book Status**: Organize your library by categorizing books as "Yet to Start," "Complete," or "In Progress."
 
@@ -24,7 +24,12 @@ Welcome to "My Books" application!  This MERN (MongoDB, Express.js, React, Node.
 
 ## Currently Working On
 
-- **Search and Discovery Feature**: We are currently working on enhancing the search bar and discovery feature to make it even easier for you to find new books to read.
+- **Search and Discovery Feature**: I am currently working on enhancing the search bar and discovery feature to make it even easier for you to find new books to read.
+  
+
+## Charting Library
+
+I used [Recharts](https://recharts.org/en-US/) for creating interactive charts and graphs within our application. Recharts is a powerful library for visualizing data in React applications.
 
 
 ## Technologies Used
@@ -39,7 +44,8 @@ Welcome to "My Books" application!  This MERN (MongoDB, Express.js, React, Node.
 
 - **User Authentication**: Implement user authentication and authorization using JWT (JSON Web Tokens).
 
-- **Data Visualization**: Utilize libraries like Chart.js to create interactive graphs and charts.
+- **Data Visualization**: Utilize Recharts and other libraries to create interactive graphs and charts.
+
 
 ## Getting Started
 
@@ -50,7 +56,7 @@ To get started with this application, follow these steps:
    ```bash
    git clone https://github.com/your-username/my-books-app.git
    
-2. Naviagate to the project directory:
+2. Navigate to the project directory:
    
    cd books
    
