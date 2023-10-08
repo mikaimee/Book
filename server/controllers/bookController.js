@@ -159,24 +159,44 @@ const singleBook = async (req, res) => {
 // Search books based on title, author, genre, or keywords in description
 const searchBooks = async (req, res) => {
     try{
-        const { query } = req.query  // Get the search query from the request query parameters
-        console.log('Search Query:', query);
+        const filter = req.query.searchKeyword
+        let where = {}
+        if (filter) {
+            where.title = {$regex: filter, $options: 'i'}
+        }
+        let query = Book.find(where)
+        const page = parseInt(req.query.page) || 1
+        const pageSize = parseInt(req.query.limit) || 10
+        const skip = (page - 1) * pageSize
+        const total = await Book.find(where).countDocuments()
+        const pages = Math.ceil(total / pageSize)
 
-        const books = await Book.find({
-            $or: [
-                { title: { $regex: query, $options: 'i' } }, // Case-insensitive search
-                { author: { $regex: query, $options: 'i' } },
-                { description: { $regex: query, $options: 'i' } },
-            ]
+        res.header({
+            "x-filter": filter,
+            "x-totalcount": JSON.stringify(total),
+            "x-currentpage": JSON.stringify(page),
+            "x-pagesize": JSON.stringify(pageSize),
+            "x-totalpagecount": JSON.stringify(pages)
         })
 
-        if(books.length === 0) {
-            return res.status(404).json({ message: "No books found that fits search request"})
+        if (page > pages) {
+            return res.json([])
         }
-        res.status(200).json({ books })
+
+        const result = await query
+            .skip(skip)
+            .limit(pageSize)
+            .populate([
+                {
+                    path: 'ratings'
+                }
+            ])
+            .sort({ updatedAt: "desc"})
+        
+        res.status(200).json(result);
     }
     catch (error) {
-        console.error(error);
+        console.error("Error searching for books", error.message);
         res.status(500).json({ error: "An error occured while searching the book" })
     }
 }

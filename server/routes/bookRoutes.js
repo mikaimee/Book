@@ -15,8 +15,8 @@ router.route('/:bookId')
 router.route('/:bookId/uploadCoverImage')
     .put(bookController.updateCoverImage)
 
-router.get('/search', bookController.searchBooks)  // Needs work
-router.get('/filter', bookController.filterBooks)  // Needs work
+router.route('/search')
+    .get(bookController.searchBooks)  // Needs work
 
 
 

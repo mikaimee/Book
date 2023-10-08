@@ -59,7 +59,7 @@ const PopularBooks = () => {
 
     const scrollLeft = () => {
         if (startIndex > 0) {
-            setStartIndex(startIndex - itemsPerPage)
+            setStartIndex(Math.max(0, startIndex - itemsPerPage));
         }
     }
     const scrollRight = () => {

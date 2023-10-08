@@ -8,6 +8,11 @@ import { Link } from 'react-router-dom'
 const BooksByGenre = ({ genreName }) => {
 
     const [genreId, setGenreId] = useState(null)
+    const containerRef = useRef(null)
+    const [startIndex, setStartIndex] = useState(0)
+    const minItemsPerPage = 1
+    const [itemsPerPage, setItemsPerPage] = useState(3)
+
 
     // Retrieve all genres
     const {
@@ -45,24 +50,22 @@ const BooksByGenre = ({ genreName }) => {
     )
     // console.log('booksForGenreData: ', genreBooksData)
 
-    // CSS
-    const containerRef = useRef(null)
-    const scrollLeft = () => {
+    const calculateItemsPerPage = () => {
         if (containerRef.current) {
-            containerRef.current.scrollLeft -= 350
-        }
-    }
-    const scrollRight = () => {
-        if (containerRef.current) {
-            containerRef.current.scrollLeft += 350
+            const containerWidth = containerRef.current.offsetWidth;
+            const itemWidth = 350
+            const newItemsPerPage = Math.floor(containerWidth / itemWidth);
+            setItemsPerPage(Math.max(minItemsPerPage, newItemsPerPage));
         }
     }
 
-    const hasMoreItemsToLeft = containerRef.current && containerRef.current.scrollLeft > 0
-    const hasMoreItemsToRight =
-        containerRef.current &&
-        containerRef.current.scrollLeft + containerRef.current.clientWidth <
-        containerRef.current.scrollWidth
+    useEffect(() => {
+        calculateItemsPerPage();
+        window.addEventListener('resize', calculateItemsPerPage);
+        return () => {
+            window.removeEventListener('resize', calculateItemsPerPage);
+        };
+    }, [])
 
     if (!genreId) {
         return <div>Genre not found.</div>
@@ -76,26 +79,42 @@ const BooksByGenre = ({ genreName }) => {
         return <div>Error: {genresError || genreBooksError}</div>
     }
 
+    // CSS
+
+    const scrollLeft = () => {
+        if (startIndex > 0) {
+            setStartIndex(Math.max(0, startIndex - itemsPerPage));
+        }
+    }
+    const scrollRight = () => {
+        if (startIndex + itemsPerPage < genreBooksData.length) {
+            setStartIndex(startIndex + itemsPerPage)
+        }
+    }
+
+    const visibleBooksSlice = genreBooksData.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    )
+
     return (
         <div className='hS-wrap'>
             <h2 className='hS-title'>{genreName}</h2>
             <div className='hS-item-container' ref={containerRef}>
-                {genreBooksData
-                    .filter(book => book?.book?._id)
-                    .map(book => (
-                        <div className='hS-item' key={book?.book?._id}>
-                            <div>
-                                <CoverImage 
-                                    bookId={book?.book?._id}
-                                    coverImage={book?.book?.coverImage}
-                                    isEditable={false}
-                                />
-                            </div>
-                            <Link to={`/book/${book?.book?._id}`}>
-                                <h2 className='hS-title'>{book?.book?.title}</h2>
-                            </Link>
-                            <p className='hS-information'>{book?.book?.author}</p>
+                {visibleBooksSlice.map((book) => (
+                    <div className='hS-item' key={book?.book?._id}>
+                        <div>
+                            <CoverImage 
+                                bookId={book?.book?._id}
+                                coverImage={book?.book?.coverImage}
+                                isEditable={false}
+                            />
                         </div>
+                        <Link to={`/book/${book?.book?._id}`}>
+                            <h2 className='hS-title'>{book?.book?.title}</h2>
+                        </Link>
+                        <p className='hS-information'>{book?.book?.author}</p>
+                    </div>
                 ))}
             </div>
             <div className='hS-scroll-button left' onClick={scrollLeft}>&lt;</div>

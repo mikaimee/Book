@@ -3,6 +3,7 @@ import { getAllBooks } from '../../services/book'
 import { useQuery } from '@tanstack/react-query'
 import CoverImage from '../book/CoverImage'
 import { Link } from 'react-router-dom'
+import ResizeObserver from 'resize-observer-polyfill'
 
 const LatestBooks = () => {
 
@@ -12,8 +13,8 @@ const LatestBooks = () => {
     // CSS
     const containerRef = useRef(null)
     const [startIndex, setStartIndex] = useState(0)
-    const minItemsPerPage = 1
     const [itemsPerPage, setItemsPerPage] = useState(3)
+    const minItemsPerPage = 1
 
     const calculateItemsPerPage = () => {
         if (containerRef.current) {
@@ -75,8 +76,8 @@ const LatestBooks = () => {
             <h2 className='hS-title'>Latest Books</h2>
             <div className='hS-item-container' ref={containerRef}>
                 <ul>
-                    {visibleBooksSlice.map((book) => (
-                        <li key={book._id} className='hS-item'>
+                    {visibleBooksSlice.map((book, index) => (
+                        <li key={index} className='hS-item'>
                             <div>
                                 <CoverImage 
                                     bookId={book?._id}
